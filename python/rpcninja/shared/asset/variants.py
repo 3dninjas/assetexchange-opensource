@@ -1,7 +1,7 @@
 import itertools
 
 
-def explode_variants(self, assemblyName, variants):
+def explode_variants(assemblyName, variants):
     if assemblyName not in variants:
         return ([], [])
     # build cartesian product out of provided variants
@@ -10,7 +10,7 @@ def explode_variants(self, assemblyName, variants):
     return (labels, configs)
 
 
-def filter_objects_by_variant_config(self, asset, assemblyName, variantLabels, variantConfig):
+def filter_objects_by_variant_config(asset, assemblyName, variantLabels, variantConfig):
     if assemblyName not in asset['assemblies']:
         return []
 
