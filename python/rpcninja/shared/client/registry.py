@@ -1,10 +1,9 @@
 import os
 import json
-from .. import environment
-
+from .. import common
 
 def lookup_port(category, type):
-    regDir = environment.registry_root_path(category, type)
+    regDir = common.registry_root_path(category, type)
     pidfiles = [fn for fn in os.listdir(regDir) if (
         os.path.isfile(os.path.join(regDir, fn)) and fn.isdigit())]
     if len(pidfiles) > 0:

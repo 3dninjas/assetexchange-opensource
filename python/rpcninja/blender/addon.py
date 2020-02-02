@@ -77,7 +77,7 @@ def register_addon(extension_uid, bl_info, AssetPushService=None, misc_services=
         'extension.blender', _extension_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
-            'environment': shared.environment_name(),
+            'environment': shared.common.environment_name(),
             'category': 'extension.blender',
             'type': extension_uid,
             'pid': os.getpid(),
