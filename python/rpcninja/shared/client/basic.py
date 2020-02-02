@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-def rpc_call_basic(port, service, function, input, timeout):
+def call_basic_func(port, service, function, input, timeout):
 
     # prepare url
     url = "http://127.0.0.1:" + str(port) + "/.rpc/basic"

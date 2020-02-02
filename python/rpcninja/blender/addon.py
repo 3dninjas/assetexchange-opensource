@@ -6,17 +6,14 @@ import json
 import sys
 import atexit
 import bpy
-from ..shared.server import interfaces as shared_server_interfaces
-from ..shared.server import http as shared_server_http
-from ..shared.server import registry as shared_server_registry
-from ..shared import environment as shared_environment
-from . import threading as blender_threading
+from .. import shared
+from . import mainthread
 
 _extension_uid = None
 _http_server = None
 
 
-def start(extension_uid, bl_info, AssetPushService=None, misc_services={}):
+def register_addon(extension_uid, bl_info, AssetPushService=None, misc_services={}):
     global _extension_uid
     global _http_server
     #global _logger
@@ -37,7 +34,7 @@ def start(extension_uid, bl_info, AssetPushService=None, misc_services={}):
 
     # check if extension service is derived properly
     if AssetPushService is not None:
-        if not issubclass(AssetPushService, shared_server_interfaces.AssetPushServiceInterface):
+        if not issubclass(AssetPushService, shared.server.AssetPushServiceInterface):
             raise RuntimeError(
                 'AssetPushService should inherit AssetPushServiceInterface')
 
@@ -53,7 +50,7 @@ def start(extension_uid, bl_info, AssetPushService=None, misc_services={}):
     service_registry = {key: val for key,
                         val in service_registry.items() if val is not None}
 
-    class LocalHttpServerRequestHandler(shared_server_http.HttpServerRequestHandler):
+    class LocalHttpServerRequestHandler(shared.server.HttpServerRequestHandler):
         # copy service registry over
         _service_registry = service_registry
 
@@ -76,11 +73,11 @@ def start(extension_uid, bl_info, AssetPushService=None, misc_services={}):
     #_logger.info("port=" + str(port))
 
     # write registration file
-    regfile = shared_server_registry.extension_registration_file(
+    regfile = shared.server.registration_path(
         'extension.blender', _extension_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
-            'environment': shared_environment.environment_name(),
+            'environment': shared.environment_name(),
             'category': 'extension.blender',
             'type': extension_uid,
             'pid': os.getpid(),
@@ -100,22 +97,22 @@ def start(extension_uid, bl_info, AssetPushService=None, misc_services={}):
         }, indent=2))
 
     # register main thread task handler
-    bpy.app.timers.register(blender_threading.main_thread_handler,
+    bpy.app.timers.register(mainthread.main_thread_handler,
                             first_interval=1.0, persistent=True)
 
 
 @atexit.register
-def stop():
+def unregister_addon():
     global _http_server
     #global _logger
 
     # remove main thread task handler
-    if bpy.app.timers.is_registered(blender_threading.main_thread_handler):
+    if bpy.app.timers.is_registered(mainthread.main_thread_handler):
         #_logger.info('removing main thread task handler')
-        bpy.app.timers.unregister(blender_threading.main_thread_handler)
+        bpy.app.timers.unregister(mainthread.main_thread_handler)
 
     # try to remove registration file
-    regfile = shared_server_registry.extension_registration_file(
+    regfile = shared.server.registration_path(
         'extension.blender', _extension_uid)
     for _ in range(5):
         if os.path.exists(regfile):
@@ -139,4 +136,4 @@ def stop():
         _http_server = None
 
     # execute all pending tasks (in my mind this might prevent deadlocks, maybe?)
-    blender_threading.main_thread_handler()
+    mainthread.main_thread_handler()

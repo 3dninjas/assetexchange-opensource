@@ -11,22 +11,20 @@ bl_info = {
     "category": "Object"
 }
 
-import rpcninja.shared.server.interfaces as rpcninja_interfaces
-import rpcninja.blender.threading as rpcninja_threading
-import rpcninja.blender.addon as rpcninja_addon
-import rpcninja.shared.asset.variants as asset_variants
+
+import rpcninja
 import bpy
 
 
 def _import_environment_hdri(asset, selectedVariants):
     # explode variants
-    variantLabels, variantConfigs = asset_variants.explode_variants('Primary', selectedVariants)
+    variantLabels, variantConfigs = rpcninja.shared.asset.explode_variants('Primary', selectedVariants)
 
     # iterate variant config
     for variantConfig in variantConfigs:
 
         # get environment map
-        object_list = asset_variants.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
+        object_list = rpcninja.shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         if len(object_list) == 0:
             return
         env_map = object_list[0]
@@ -49,13 +47,13 @@ def _import_environment_hdri(asset, selectedVariants):
 
 def _import_surface_maps(asset, selectedVariants):
     # explode variants
-    variantLabels, variantConfigs = asset_variants.explode_variants('Primary', selectedVariants)
+    variantLabels, variantConfigs = rpcninja.shared.asset.explode_variants('Primary', selectedVariants)
 
     # iterate variant config
     for variantConfig in variantConfigs:
 
         # get all maps and convert to dictionary by map type
-        object_list = asset_variants.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
+        object_list = rpcninja.shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
         # create material object
@@ -157,7 +155,7 @@ def _import_surface_maps(asset, selectedVariants):
             node_y_next -= node_y_delta
 
 
-class AssetPushService(rpcninja_interfaces.AssetPushServiceInterface):
+class AssetPushService(rpcninja.shared.server.AssetPushServiceInterface):
     # lists all supported asset types which can be pushed here
     def SupportedTypes(self, _):
         return [
@@ -171,7 +169,7 @@ class AssetPushService(rpcninja_interfaces.AssetPushServiceInterface):
         return True
 
     # asset gets pushed here
-    @rpcninja_threading.execute_on_main_thread
+    @rpcninja.blender.execute_on_main_thread
     def Push(self, data):
         if data['asset']['typeUid'] == 'environment.hdri':
             _import_environment_hdri(data['asset'], data['selectedVariants'])
@@ -183,8 +181,8 @@ class AssetPushService(rpcninja_interfaces.AssetPushServiceInterface):
 
 
 def register():
-    rpcninja_addon.start("assetninja.extension.blender.assetimport", bl_info, AssetPushService)
+    rpcninja.blender.register_addon("assetninja.extension.blender.assetimport", bl_info, AssetPushService)
 
 
 def unregister():
-    rpcninja_addon.stop()
+    rpcninja.blender.unregister_addon()
