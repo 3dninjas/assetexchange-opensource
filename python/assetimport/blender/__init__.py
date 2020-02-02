@@ -16,7 +16,7 @@ import rpcninja
 import bpy
 
 
-def _import_environment_hdri(asset, selectedVariants):
+def import_environment_hdri(asset, selectedVariants):
     # explode variants
     variantLabels, variantConfigs = rpcninja.shared.asset.explode_variants('Primary', selectedVariants)
 
@@ -45,7 +45,7 @@ def _import_environment_hdri(asset, selectedVariants):
             nodes.get("World Output").inputs[0], env_text_node.outputs[0])
 
 
-def _import_surface_maps(asset, selectedVariants):
+def import_surface_maps(asset, selectedVariants):
     # explode variants
     variantLabels, variantConfigs = rpcninja.shared.asset.explode_variants('Primary', selectedVariants)
 
@@ -172,10 +172,10 @@ class AssetPushService(rpcninja.shared.server.AssetPushServiceInterface):
     @rpcninja.blender.execute_on_main_thread
     def Push(self, data):
         if data['asset']['typeUid'] == 'environment.hdri':
-            _import_environment_hdri(data['asset'], data['selectedVariants'])
+            import_environment_hdri(data['asset'], data['selectedVariants'])
             return True
         if data['asset']['typeUid'] == 'surface.maps':
-            _import_surface_maps(data['asset'], data['selectedVariants'])
+            import_surface_maps(data['asset'], data['selectedVariants'])
             return True
         return False
 

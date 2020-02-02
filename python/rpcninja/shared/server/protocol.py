@@ -1,21 +1,26 @@
 import json
+import logging
 import http.server
 
 
 class HttpServerRequestHandler(http.server.BaseHTTPRequestHandler):
+    # retrieves logger (will be overriden)
+    def get_logger(self):
+        return logging.getLogger()
+
     # retrieves service registry (will be overriden)
     def get_service_registry(self):
         return {}
 
     # apply our logging mechanism
     def log_message(self, format, *args):
-        #global _logger
-        #_logger.info(format % args)
+        #logger = self.get_logger()
+        #logger.info(format % args)
         pass
 
     # handle post request
     def do_POST(self):
-        #global _logger
+        logger = self.get_logger()
         try:
             # load and parse request
             req_raw = self.rfile.read(int(self.headers.get('content-length')))
@@ -47,7 +52,7 @@ class HttpServerRequestHandler(http.server.BaseHTTPRequestHandler):
                 if not callable(function):
                     raise RuntimeError('unknown_function')
                 # call function (will be delegated to main thread automatically, when annotated)
-                #_logger.info('executing ' + req_msg['address'])
+                logger.info('executing ' + req_msg['address'])
                 res_msg = {
                     "id": req_msg["id"],
                     "output": function(req_msg["input"]),
@@ -60,7 +65,7 @@ class HttpServerRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps(res_msg).encode())
             except Exception as e:
-                #_logger.exception("exception occured in post handler")
+                logger.exception("exception occured in post handler")
                 # prepare response
                 res_msg = {
                     "id": req_msg["id"],
@@ -74,7 +79,7 @@ class HttpServerRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps(res_msg).encode())
         except Exception as e:
-            #_logger.exception("exception occured in post handler")
+            logger.exception("exception occured in post handler")
             # write response
             self.send_response(500)
             self.end_headers()

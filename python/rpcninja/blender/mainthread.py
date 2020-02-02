@@ -5,14 +5,12 @@ _main_thread_exec_queue = queue.Queue()
 
 
 def main_thread_handler():
-    #global _logger
     had_work = not _main_thread_exec_queue.empty()
     while not _main_thread_exec_queue.empty():
         task = _main_thread_exec_queue.get()
         try:
             task['return'] = task['function'](*task['args'], **task['kwargs'])
         except Exception as e:
-            #_logger.exception("exception occured in main thread handler")
             task['exception'] = str(e)
         task['completion'].set()
     if had_work:
@@ -22,7 +20,6 @@ def main_thread_handler():
 
 def execute_on_main_thread(original_function):
     def new_function(*args, **kwargs):
-        #global _logger
         # skip delegation, if we are on main thread alread
         if threading.current_thread() is threading.main_thread():
             return original_function(*args, **kwargs)
