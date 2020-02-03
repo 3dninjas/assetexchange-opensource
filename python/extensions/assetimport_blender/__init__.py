@@ -13,9 +13,7 @@ bl_info = {
 
 import assetexchange_shared
 import assetexchange_blender
-
-import importlib
-importer = importlib.import_module(__name__ + ".importer")
+from . import importer
 
 class AssetPushService(assetexchange_shared.server.AssetPushServiceInterface):
     # lists all supported asset types which can be pushed here
