@@ -1,59 +1,15 @@
-bl_info = {
-    "name": "Asset Ninja Asset Import",
-    "description": "Handles asset pushes from Asset Ninja.",
-    "author": "Niklas Salmoukas",
-    "version": (1, 0),
-    "blender": (2, 80, 0),
-    "location": "None",
-    "wiki_url": "https://github.com/core-process/assetninja/wiki",
-    "tracker_url": "https://github.com/core-process/assetninja/issues",
-    "support": "COMMUNITY",
-    "category": "Object"
-}
-
-
-import rpcninja
 import bpy
+import assetexchange.shared
 
-
-def import_environment_hdri(asset, selectedVariants):
+def surface_maps(asset, selectedVariants):
     # explode variants
-    variantLabels, variantConfigs = rpcninja.shared.asset.explode_variants('Primary', selectedVariants)
-
-    # iterate variant config
-    for variantConfig in variantConfigs:
-
-        # get environment map
-        object_list = rpcninja.shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
-        if len(object_list) == 0:
-            return
-        env_map = object_list[0]
-
-        # enable world nodes
-        world = bpy.data.worlds['World']
-        world.use_nodes = True
-        nodes = world.node_tree.nodes
-        
-        # create texture node
-        env_text_node = nodes.new('ShaderNodeTexEnvironment')
-        env_text_node.image = bpy.data.images.load(env_map["file"]["path"])
-        env_text_node.show_texture = True
-        env_text_node.image.colorspace_settings.name = "Linear"
-
-        # link to world
-        world.node_tree.links.new(
-            nodes.get("World Output").inputs[0], env_text_node.outputs[0])
-
-
-def import_surface_maps(asset, selectedVariants):
-    # explode variants
-    variantLabels, variantConfigs = rpcninja.shared.asset.explode_variants('Primary', selectedVariants)
+    variantLabels, variantConfigs = assetexchange.shared.asset.explode_variants('Primary', selectedVariants)
 
     # iterate variant config
     for variantConfig in variantConfigs:
 
         # get all maps and convert to dictionary by map type
-        object_list = rpcninja.shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
+        object_list = assetexchange.shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
         # create material object
@@ -153,36 +109,3 @@ def import_surface_maps(asset, selectedVariants):
             disp_tex_node.location = (node_x - 400, node_y_next)
             disp_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
-
-
-class AssetPushService(rpcninja.shared.server.AssetPushServiceInterface):
-    # lists all supported asset types which can be pushed here
-    def SupportedTypes(self, _):
-        return [
-            'environment.hdri',
-            'mesh+surface.maps',
-            'surface.maps',
-        ]
-
-    # checks if specific asset can be pushed here
-    def PushAllowed(self, asset):
-        return True
-
-    # asset gets pushed here
-    @rpcninja.blender.execute_on_main_thread
-    def Push(self, data):
-        if data['asset']['typeUid'] == 'environment.hdri':
-            import_environment_hdri(data['asset'], data['selectedVariants'])
-            return True
-        if data['asset']['typeUid'] == 'surface.maps':
-            import_surface_maps(data['asset'], data['selectedVariants'])
-            return True
-        return False
-
-
-def register():
-    rpcninja.blender.register_addon("assetninja.extension.blender.assetimport", bl_info, AssetPushService)
-
-
-def unregister():
-    rpcninja.blender.unregister_addon()
