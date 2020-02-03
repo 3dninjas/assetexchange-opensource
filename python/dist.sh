@@ -17,3 +17,4 @@ mkdir -p "$ROOT/dist"
 
 # pack extensions
 pyscriptpacker "$ROOT/dist/assetimport_blender.py" "$ROOT/extensions/assetimport_blender" "$ROOT/libraries"
+pyscriptpacker "$ROOT/dist/spaceprobe_blender.py" "$ROOT/extensions/spaceprobe_blender" "$ROOT/libraries"

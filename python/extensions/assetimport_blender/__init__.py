@@ -5,8 +5,8 @@ bl_info = {
     "version": (1, 0),
     "blender": (2, 80, 0),
     "location": "None",
-    "wiki_url": "https://github.com/core-process/assetninja/wiki",
-    "tracker_url": "https://github.com/core-process/assetninja/issues",
+    "wiki_url": "https://github.com/assetninja/assetexchange/wiki",
+    "tracker_url": "https://github.com/assetninja/assetexchange/issues",
     "support": "COMMUNITY",
     "category": "Object"
 }
