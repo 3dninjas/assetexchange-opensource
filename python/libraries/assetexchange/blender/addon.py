@@ -7,7 +7,7 @@ import sys
 import atexit
 import logging
 import bpy
-from .. import shared
+import assetexchange.shared
 from . import mainthread
 
 
@@ -49,7 +49,7 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
 
     # check if push service is derived properly
     if AssetPushService is not None:
-        if not issubclass(AssetPushService, shared.server.AssetPushServiceInterface):
+        if not issubclass(AssetPushService, assetexchange.shared.server.AssetPushServiceInterface):
             raise RuntimeError(
                 'AssetPushService should inherit AssetPushServiceInterface')
 
@@ -62,7 +62,7 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
                         val in service_registry.items() if val is not None}
 
     # setup http protocol handler
-    class HttpServerRequestHandler(shared.server.HttpServerRequestHandler):
+    class HttpServerRequestHandler(assetexchange.shared.server.HttpServerRequestHandler):
         # copy logger over
         _logger = logger
 
@@ -93,11 +93,11 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
     logger.info("port=" + str(port))
 
     # write registration file
-    regfile = shared.server.registration_path(
+    regfile = assetexchange.shared.server.registration_path(
         'extension.blender', addon_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
-            'environment': shared.common.environment_name(),
+            'environment': assetexchange.shared.common.environment_name(),
             'category': 'extension.blender',
             'type': addon_uid,
             'pid': os.getpid(),
@@ -132,7 +132,7 @@ def unregister_addon(addon_uid):
         bpy.app.timers.unregister(mainthread.main_thread_handler)
 
     # try to remove registration file
-    regfile = shared.server.registration_path(
+    regfile = assetexchange.shared.server.registration_path(
         'extension.blender', addon_uid)
     for _ in range(5):
         if os.path.exists(regfile):

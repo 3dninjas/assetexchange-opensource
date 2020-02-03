@@ -11,10 +11,6 @@ bl_info = {
     "category": "Object"
 }
 
-# PACK: assetexchange.shared -> ../../../libraries/assetexchange/shared
-# PACK: assetexchange.blender -> ../../../libraries/assetexchange/blender
-# PACK: .importer -> ./importer
-
 import assetexchange.shared
 import assetexchange.blender
 from . import importer

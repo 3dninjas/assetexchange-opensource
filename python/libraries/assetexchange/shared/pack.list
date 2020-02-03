@@ -1,0 +1,12 @@
+.common.environment
+.common
+.asset.variants
+.asset
+.server.services
+.server.registry
+.server.protocol
+.server
+.client.registry
+.client.basic
+.client
+.
