@@ -16,4 +16,4 @@ rm -rf "$ROOT/dist"
 mkdir -p "$ROOT/dist"
 
 # pack extensions
-pyscriptpacker "$ROOT/dist/assetimport.blender.py" "$ROOT/extensions/assetimport/blender" "$ROOT/libraries"
+pyscriptpacker "$ROOT/dist/assetimport_blender.py" "$ROOT/extensions/assetimport_blender" "$ROOT/libraries"
