@@ -9,5 +9,5 @@ rm -rf "$ROOT/dist"
 mkdir -p "$ROOT/dist"
 
 # pack extensions
-npx -q pyscriptpacker@latest "$ROOT/dist/assetimport_blender.py" "$ROOT/extensions/assetimport_blender" "$ROOT/libraries"
-npx -q pyscriptpacker@latest "$ROOT/dist/spaceprobe_blender.py" "$ROOT/extensions/spaceprobe_blender" "$ROOT/libraries"
+npx -q pyscriptpacker@latest 3.5 "$ROOT/dist/assetimport_blender.py" "$ROOT/extensions/assetimport_blender" "$ROOT/libraries"
+npx -q pyscriptpacker@latest 3.5 "$ROOT/dist/spaceprobe_blender.py" "$ROOT/extensions/spaceprobe_blender" "$ROOT/libraries"
