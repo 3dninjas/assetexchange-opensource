@@ -11,11 +11,13 @@ bl_info = {
     "category": "Object"
 }
 
-import assetexchange.shared
-import assetexchange.blender
-from . import importer
+import assetexchange_shared
+import assetexchange_blender
 
-class AssetPushService(assetexchange.shared.server.AssetPushServiceInterface):
+import importlib
+importer = importlib.import_module(__name__ + ".importer")
+
+class AssetPushService(assetexchange_shared.server.AssetPushServiceInterface):
     # lists all supported asset types which can be pushed here
     def SupportedTypes(self, _):
         return [
@@ -29,7 +31,7 @@ class AssetPushService(assetexchange.shared.server.AssetPushServiceInterface):
         return True
 
     # asset gets pushed here
-    @assetexchange.blender.execute_on_main_thread
+    @assetexchange_blender.execute_on_main_thread
     def Push(self, data):
         if data['asset']['typeUid'] == 'environment.hdri':
             importer.environment_hdri(data['asset'], data['selectedVariants'])
@@ -41,8 +43,8 @@ class AssetPushService(assetexchange.shared.server.AssetPushServiceInterface):
 
 
 def register():
-    assetexchange.blender.register_addon("assetninja.extension.blender.assetimport", bl_info, AssetPushService)
+    assetexchange_blender.register_addon("assetninja.extension.blender.assetimport", bl_info, AssetPushService)
 
 
 def unregister():
-    assetexchange.blender.unregister_addon("assetninja.extension.blender.assetimport")
+    assetexchange_blender.unregister_addon("assetninja.extension.blender.assetimport")

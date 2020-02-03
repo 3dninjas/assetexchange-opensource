@@ -7,7 +7,7 @@ import sys
 import atexit
 import logging
 import bpy
-import assetexchange.shared
+import assetexchange_shared
 from . import mainthread
 
 
@@ -49,7 +49,7 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
 
     # check if push service is derived properly
     if AssetPushService is not None:
-        if not issubclass(AssetPushService, assetexchange.shared.server.AssetPushServiceInterface):
+        if not issubclass(AssetPushService, assetexchange_shared.server.AssetPushServiceInterface):
             raise RuntimeError(
                 'AssetPushService should inherit AssetPushServiceInterface')
 
@@ -62,7 +62,7 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
                         val in service_registry.items() if val is not None}
 
     # setup http protocol handler
-    class HttpServerRequestHandler(assetexchange.shared.server.HttpServerRequestHandler):
+    class HttpServerRequestHandler(assetexchange_shared.server.HttpServerRequestHandler):
         # copy logger over
         _logger = logger
 
@@ -93,11 +93,11 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
     logger.info("port=" + str(port))
 
     # write registration file
-    regfile = assetexchange.shared.server.registration_path(
+    regfile = assetexchange_shared.server.registration_path(
         'extension.blender', addon_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
-            'environment': assetexchange.shared.common.environment_name(),
+            'environment': assetexchange_shared.common.environment_name(),
             'category': 'extension.blender',
             'type': addon_uid,
             'pid': os.getpid(),
@@ -121,7 +121,6 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
                             first_interval=1.0, persistent=True)
 
 
-@atexit.register
 def unregister_addon(addon_uid):
     # prepare logger
     logger = _prepare_logger(addon_uid)
@@ -132,7 +131,7 @@ def unregister_addon(addon_uid):
         bpy.app.timers.unregister(mainthread.main_thread_handler)
 
     # try to remove registration file
-    regfile = assetexchange.shared.server.registration_path(
+    regfile = assetexchange_shared.server.registration_path(
         'extension.blender', addon_uid)
     for _ in range(5):
         if os.path.exists(regfile):
@@ -158,3 +157,10 @@ def unregister_addon(addon_uid):
 
     # execute all pending tasks (in my mind this might prevent deadlocks, maybe?)
     mainthread.main_thread_handler()
+
+
+@atexit.register
+def unregister_addons():
+    global _http_servers
+    for addon_uid in list(_http_servers.keys()):
+        unregister_addon(addon_uid)

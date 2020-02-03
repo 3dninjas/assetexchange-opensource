@@ -1,15 +1,15 @@
 import bpy
-import assetexchange.shared
+import assetexchange_shared
 
 def surface_maps(asset, selectedVariants):
     # explode variants
-    variantLabels, variantConfigs = assetexchange.shared.asset.explode_variants('Primary', selectedVariants)
+    variantLabels, variantConfigs = assetexchange_shared.asset.explode_variants('Primary', selectedVariants)
 
     # iterate variant config
     for variantConfig in variantConfigs:
 
         # get all maps and convert to dictionary by map type
-        object_list = assetexchange.shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
+        object_list = assetexchange_shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
         # create material object
