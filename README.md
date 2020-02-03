@@ -6,9 +6,8 @@ An asset exchange protocol implementation used by Asset Ninja.
 
 ```sh
 # prerequisites
-# note: check if you have the latest version installed, before submitting bug reports!
-# https://www.npmjs.com/package/pyscriptpacker
-npm install -g pyscriptpacker
+# npm and npx
+brew install node
 
 # build extensions
 cd ./python
