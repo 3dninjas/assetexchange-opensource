@@ -1,9 +1,12 @@
 import json
 import logging
-import http.server
 
+try:
+    from BaseHTTPServer import BaseHTTPRequestHandler
+except ImportError:
+    from http.server import BaseHTTPRequestHandler
 
-class HttpServerRequestHandler(http.server.BaseHTTPRequestHandler):
+class HttpServerRequestHandler(BaseHTTPRequestHandler):
     # retrieves logger (will be overriden)
     def get_logger(self):
         return logging.getLogger()

@@ -1,5 +1,9 @@
-import urllib.request
 import json
+
+try:
+    from urllib.request import urlopen, Request
+except ImportError:
+    from urllib2 import urlopen, Request
 
 def call_basic_func(port, service, function, input, timeout):
 
@@ -20,13 +24,13 @@ def call_basic_func(port, service, function, input, timeout):
     reqMsgByte = json.dumps(reqMsg).encode('utf8')
 
     # execute request
-    req = urllib.request.Request(
+    req = Request(
         url, data=reqMsgByte, method="POST",
         headers={'content-type': 'application/json'}
     )
 
     # read response message
-    res = urllib.request.urlopen(req, timeout=timeout)
+    res = urlopen(req, timeout=timeout)
     resMsg = json.loads(res.read().decode('utf-8'))
 
     # raise error if one occured

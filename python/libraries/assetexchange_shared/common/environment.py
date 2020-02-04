@@ -1,4 +1,5 @@
 import os
+import errno
 
 
 def environment_name():
@@ -7,7 +8,11 @@ def environment_name():
 
 def runtime_path(*parts):
     path = os.path.join(os.path.expanduser("~"), ".assetninja", *parts)
-    os.makedirs(path, exist_ok=True)
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
     return path
 
 

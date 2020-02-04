@@ -1,27 +1,30 @@
 import os
 import time
 import threading
-import http
 import json
 import sys
 import atexit
 import logging
-import bpy
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from SocketServer import ThreadingMixIn
 import assetexchange_shared
-from . import mainthread
+
+
+class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
+    """Handle requests in a separate thread."""
 
 
 _http_servers = dict()
 
 
-def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
+def register_plugin(plugin_uid, AssetPushService=None, misc_services={}):
     # prevent double registration
     global _http_servers
-    if addon_uid in _http_servers:
+    if plugin_uid in _http_servers:
         raise RuntimeError('add-on already registered')
 
     # prepare logger
-    logger = logging.getLogger(addon_uid)
+    logger = logging.getLogger(plugin_uid)
     logger.setLevel(logging.INFO)
 
     # add console handler
@@ -64,61 +67,52 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
             return self._service_registry
 
     # start http server using a free port
-    _http_servers[addon_uid] = http.server.ThreadingHTTPServer(
+    _http_servers[plugin_uid] = ThreadingHTTPServer(
         ('127.0.0.1', 0),
         HttpServerRequestHandler
     )
     thread = threading.Thread(
-        target=_http_servers[addon_uid].serve_forever)
-    # note: required for blender exit, otherwhise it will block (even though we have an atexit handler)
+        target=_http_servers[plugin_uid].serve_forever)
+    # note: required for maya exit, otherwhise it will block (even though we have an atexit handler)
     thread.setDaemon(True)
     thread.start()
 
     # retrieve port (no race condition here, as it is available right after construction)
-    port = _http_servers[addon_uid].server_address[1]
+    port = _http_servers[plugin_uid].server_address[1]
     logger.info("port=" + str(port))
 
     # write registration file
     regfile = assetexchange_shared.server.registration_path(
-        'extension.blender', addon_uid)
+        'extension.maya', plugin_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
             'environment': assetexchange_shared.common.environment_name(),
-            'category': 'extension.blender',
-            'type': addon_uid,
+            'category': 'extension.maya',
+            'type': plugin_uid,
             'pid': os.getpid(),
             'port': port,
             'protocols': ['basic'],
             'info': {
-                'extension.uid': addon_uid,
-                'extension.name': bl_info.get('name', None),
-                'extension.description': bl_info.get('description', None),
-                'extension.author': bl_info.get('author', None),
-                'extension.version': '.'.join(map(str, bl_info.get('version'))) if 'version' in bl_info else None,
-                'blender.executable': sys.executable,
-                'blender.version': '.'.join(map(str, bpy.app.version)),
-                'blender.user_scripts': bpy.utils.user_resource('SCRIPTS'),
+                'extension.uid': plugin_uid,
+                'extension.name': 'UNKNOWN',
+                'extension.description': 'UNKNOWN',
+                'extension.author': 'UNKNOWN',
+                'extension.version': 'UNKNOWN',
+                'maya.executable': sys.executable,
+                'maya.version': 'UNKNOWN',
+                'maya.plugins': 'UNKNOWN',
             },
             'services': list(service_registry.keys()),
         }, indent=2))
 
-    # register main thread task handler
-    bpy.app.timers.register(mainthread.main_thread_handler,
-                            first_interval=1.0, persistent=True)
 
-
-def unregister_addon(addon_uid):
+def unregister_plugin(plugin_uid):
     # fetch logger
-    logger = logging.getLogger(addon_uid)
-
-    # remove main thread task handler
-    if bpy.app.timers.is_registered(mainthread.main_thread_handler):
-        logger.info('removing main thread task handler')
-        bpy.app.timers.unregister(mainthread.main_thread_handler)
+    logger = logging.getLogger(plugin_uid)
 
     # try to remove registration file
     regfile = assetexchange_shared.server.registration_path(
-        'extension.blender', addon_uid)
+        'extension.maya', plugin_uid)
     for _ in range(5):
         if os.path.exists(regfile):
             try:
@@ -136,17 +130,14 @@ def unregister_addon(addon_uid):
 
     # shutdown server
     global _http_servers
-    if addon_uid in _http_servers:
+    if plugin_uid in _http_servers:
         logger.info('shutdown http server')
-        _http_servers[addon_uid].shutdown()
-        del _http_servers[addon_uid]
-
-    # execute all pending tasks (in my mind this might prevent deadlocks, maybe?)
-    mainthread.main_thread_handler()
+        _http_servers[plugin_uid].shutdown()
+        del _http_servers[plugin_uid]
 
 
 @atexit.register
-def unregister_addons():
+def unregister_plugins():
     global _http_servers
-    for addon_uid in list(_http_servers.keys()):
-        unregister_addon(addon_uid)
+    for plugin_uid in list(_http_servers.keys()):
+        unregister_plugin(plugin_uid)
