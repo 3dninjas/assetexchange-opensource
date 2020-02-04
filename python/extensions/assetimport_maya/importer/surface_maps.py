@@ -43,9 +43,12 @@ def surface_maps(asset, selectedVariants):
             maya.cmds.setAttr(spec_tex_node+".ftn", surface_maps["Specular"]["file"]["path"], type="string")
             maya.cmds.setAttr(spec_tex_node+".ft", 2)
             maya.cmds.defaultNavigation(connectToExisting=True, source=coords_node, destination=spec_tex_node)
-            maya.cmds.setAttr(spec_tex_node+".cs", "sRGB", type="string")
-            # link to material
-            maya.cmds.connectAttr(spec_tex_node+".outColor", mat_node+".specularColor")
+            maya.cmds.setAttr(spec_tex_node+".cs", "Raw", type="string")
+            maya.cmds.setAttr(spec_tex_node+".alphaIsLuminance", 1)
+            # create range node
+            spec_range_node = maya.cmds.shadingNode('aiRange', asShader=True, name=name + "_spec_range")
+            maya.cmds.connectAttr(spec_tex_node+".outColor", spec_range_node+".input")
+            maya.cmds.connectAttr(spec_range_node+".outColor.outColorR", mat_node+".specular")
 
         # add roughness
         if "Roughness" in surface_maps:

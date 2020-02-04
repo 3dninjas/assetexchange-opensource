@@ -44,7 +44,7 @@ def surface_maps(asset, selectedVariants):
             spec_tex_node = nodes.new('ShaderNodeTexImage')
             spec_tex_node.image = bpy.data.images.load(surface_maps["Specular"]["file"]["path"])
             spec_tex_node.show_texture = True
-            spec_tex_node.image.colorspace_settings.name = "sRGB"
+            spec_tex_node.image.colorspace_settings.name = "Non-Color"
             # link to bsdf
             mat.node_tree.links.new(
                 nodes.get("Principled BSDF").inputs[5], spec_tex_node.outputs[0])
