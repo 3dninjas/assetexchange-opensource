@@ -5,19 +5,20 @@ import json
 import sys
 import atexit
 import logging
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from SocketServer import ThreadingMixIn
+import BaseHTTPServer
+import SocketServer
+import maya.cmds
 import assetexchange_shared
 
 
-class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
+class ThreadingHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     """Handle requests in a separate thread."""
 
 
 _http_servers = dict()
 
 
-def register_plugin(plugin_uid, AssetPushService=None, misc_services={}):
+def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_services={}):
     # prevent double registration
     global _http_servers
     if plugin_uid in _http_servers:
@@ -94,13 +95,12 @@ def register_plugin(plugin_uid, AssetPushService=None, misc_services={}):
             'protocols': ['basic'],
             'info': {
                 'extension.uid': plugin_uid,
-                'extension.name': 'UNKNOWN',
-                'extension.description': 'UNKNOWN',
-                'extension.author': 'UNKNOWN',
-                'extension.version': 'UNKNOWN',
+                'extension.name': plugin_info['name'],
+                'extension.description': plugin_info['description'],
+                'extension.author': plugin_info['author'],
+                'extension.version': plugin_info['version'],
                 'maya.executable': sys.executable,
-                'maya.version': 'UNKNOWN',
-                'maya.plugins': 'UNKNOWN',
+                'maya.version': maya.cmds.about(version=True),
             },
             'services': list(service_registry.keys()),
         }, indent=2))

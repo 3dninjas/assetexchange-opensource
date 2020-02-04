@@ -14,7 +14,7 @@ from . import mainthread
 _http_servers = dict()
 
 
-def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
+def register_addon(addon_uid, addon_info, AssetPushService=None, misc_services={}):
     # prevent double registration
     global _http_servers
     if addon_uid in _http_servers:
@@ -91,10 +91,10 @@ def register_addon(addon_uid, bl_info, AssetPushService=None, misc_services={}):
             'protocols': ['basic'],
             'info': {
                 'extension.uid': addon_uid,
-                'extension.name': bl_info.get('name', None),
-                'extension.description': bl_info.get('description', None),
-                'extension.author': bl_info.get('author', None),
-                'extension.version': '.'.join(map(str, bl_info.get('version'))) if 'version' in bl_info else None,
+                'extension.name': addon_info.get('name', None),
+                'extension.description': addon_info.get('description', None),
+                'extension.author': addon_info.get('author', None),
+                'extension.version': '.'.join(map(str, addon_info.get('version'))) if 'version' in addon_info else None,
                 'blender.executable': sys.executable,
                 'blender.version': '.'.join(map(str, bpy.app.version)),
                 'blender.user_scripts': bpy.utils.user_resource('SCRIPTS'),
