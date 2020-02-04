@@ -2,7 +2,7 @@ bl_info = {
     "name": "Asset Ninja Space Probe",
     "description": "Handles all low level requests from Asset Ninja.",
     "author": "Niklas Salmoukas",
-    "version": (1, 1),
+    "version": (1, 2),
     "blender": (2, 80, 0),
     "location": "None",
     "wiki_url": "https://github.com/assetninja/assetexchange/wiki",
