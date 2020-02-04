@@ -5,6 +5,10 @@ try:
     from BaseHTTPServer import BaseHTTPRequestHandler
 except ImportError:
     from http.server import BaseHTTPRequestHandler
+try:
+  basestring
+except NameError:
+  basestring = str
 
 class HttpServerRequestHandler(BaseHTTPRequestHandler):
     # retrieves logger (will be overriden)
@@ -36,7 +40,7 @@ class HttpServerRequestHandler(BaseHTTPRequestHandler):
             req_msg.update(json.loads(req_raw))
             try:
                 # validate request
-                if 'address' not in req_msg or not isinstance(req_msg['address'], str):
+                if 'address' not in req_msg or not isinstance(req_msg['address'], basestring):
                     raise RuntimeError('address_missing')
                 if 'final' not in req_msg or req_msg['final'] != True:
                     raise RuntimeError('request_not_final')
@@ -96,4 +100,4 @@ class HttpServerRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        super().end_headers()
+        BaseHTTPRequestHandler.end_headers(self)
