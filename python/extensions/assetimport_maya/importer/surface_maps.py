@@ -12,7 +12,7 @@ def surface_maps(asset, selectedVariants):
         object_list = assetexchange_shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
-        # common
+        # name prefix
         name = asset['uid'].replace(".", "_") + "_" + "_".join(variantConfig)
 
         # create material node
@@ -30,7 +30,6 @@ def surface_maps(asset, selectedVariants):
             # create texture node
             diff_tex_node = maya.cmds.shadingNode('file', asTexture=True, name=(name + "_diff_tex"))
             maya.cmds.setAttr(diff_tex_node+".ftn", surface_maps["Diffuse"]["file"]["path"], type="string")
-            maya.cmds.setAttr(diff_tex_node+".ft", 2)
             maya.cmds.defaultNavigation(connectToExisting=True, source=coords_node, destination=diff_tex_node)
             maya.cmds.setAttr(diff_tex_node+".cs", "sRGB", type="string")
             # link to material
@@ -41,7 +40,6 @@ def surface_maps(asset, selectedVariants):
             # create texture node
             spec_tex_node = maya.cmds.shadingNode('file', asTexture=True, name=(name + "_spec_tex"))
             maya.cmds.setAttr(spec_tex_node+".ftn", surface_maps["Specular"]["file"]["path"], type="string")
-            maya.cmds.setAttr(spec_tex_node+".ft", 2)
             maya.cmds.defaultNavigation(connectToExisting=True, source=coords_node, destination=spec_tex_node)
             maya.cmds.setAttr(spec_tex_node+".cs", "Raw", type="string")
             maya.cmds.setAttr(spec_tex_node+".alphaIsLuminance", 1)
@@ -55,7 +53,6 @@ def surface_maps(asset, selectedVariants):
             # create texture node
             rough_tex_node = maya.cmds.shadingNode('file', asTexture=True, name=(name + "_rough_tex"))
             maya.cmds.setAttr(rough_tex_node+".ftn", surface_maps["Roughness"]["file"]["path"], type="string")
-            maya.cmds.setAttr(rough_tex_node+".ft", 2)
             maya.cmds.defaultNavigation(connectToExisting=True, source=coords_node, destination=rough_tex_node)
             maya.cmds.setAttr(rough_tex_node+".cs", "Raw", type="string")
             maya.cmds.setAttr(rough_tex_node+".alphaIsLuminance", 1)
@@ -69,7 +66,6 @@ def surface_maps(asset, selectedVariants):
             # create texture node
             norm_tex_node = maya.cmds.shadingNode('file', asTexture=True, name=(name + "_norm_tex"))
             maya.cmds.setAttr(norm_tex_node+".ftn", surface_maps["Normal"]["file"]["path"], type="string")
-            maya.cmds.setAttr(norm_tex_node+".ft", 2)
             maya.cmds.defaultNavigation(connectToExisting=True, source=coords_node, destination=norm_tex_node)
             maya.cmds.setAttr(norm_tex_node+".cs", "Raw", type="string")
             # create normal map node
@@ -83,7 +79,6 @@ def surface_maps(asset, selectedVariants):
             # create texture node
             disp_tex_node = maya.cmds.shadingNode('file', asTexture=True, name=(name + "_disp_tex"))
             maya.cmds.setAttr(disp_tex_node+".ftn", surface_maps["Displacement"]["file"]["path"], type="string")
-            maya.cmds.setAttr(disp_tex_node+".ft", 2)
             maya.cmds.defaultNavigation(connectToExisting=True, source=coords_node, destination=disp_tex_node)
             maya.cmds.setAttr(disp_tex_node+".cs", "Raw", type="string")
             maya.cmds.setAttr(disp_tex_node+".alphaIsLuminance", 1)
