@@ -7,7 +7,18 @@ def environment_name():
 
 
 def runtime_path(*parts):
-    path = os.path.join(os.path.expanduser("~"), ".assetninja", *parts)
+    path = os.path.expanduser("~")
+    # workaround required for 2.7, because HOME is checked on windows and sometimes set to Document folder (which is wrong)
+    if os.name == 'nt':
+        if 'USERPROFILE' in os.environ:
+            path = os.environ['USERPROFILE']
+        else:
+            try:
+                drive = os.environ['HOMEDRIVE']
+            except KeyError:
+                drive = ''
+            path = os.path.join(drive, os.environ['HOMEPATH'])
+    path = os.path.join(path, ".assetninja", *parts)
     try:
         os.makedirs(path)
     except OSError as e:
