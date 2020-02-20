@@ -1,3 +1,5 @@
+[![CLA assistant](https://cla-assistant.io/readme/badge/assetninja/assetexchange)](https://cla-assistant.io/assetninja/assetexchange)
+
 # assetexchange
 
 An asset exchange protocol implementation used by Asset Ninja.
