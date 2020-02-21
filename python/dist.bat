@@ -13,6 +13,8 @@ call npx -q pyscriptpacker@latest 3.5 ".\dist\spaceprobe_blender.py" "spaceprobe
 
 call npx -q pyscriptpacker@latest 2.7 ".\dist\assetimport_maya.py" "assetimport_maya" ".\extensions" ".\libraries" || goto :error
 
+call npx -q pyscriptpacker@latest 2.7 ".\dist\example_c4d.py" "example_c4d" ".\extensions" ".\libraries" || goto :error
+
 rem error and success handling
 goto :EOF
 :error
