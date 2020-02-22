@@ -20,8 +20,10 @@ def create_standard_environment(doc, name, filepath):
     mat[c4d.MATERIAL_USE_COLOR] = False
     mat[c4d.MATERIAL_USE_LUMINANCE] = True
     mat[c4d.MATERIAL_USE_REFLECTION] = False
+    mat[c4d.MATERIAL_PREVIEWSIZE] = c4d.MATERIAL_PREVIEWSIZE_1024
 
     _bmp_shader(doc, filepath, c4d.MATERIAL_LUMINANCE_SHADER, mat)
+
     doc.InsertMaterial(mat)
     doc.AddUndo(c4d.UNDOTYPE_NEW, mat)
 
@@ -55,7 +57,7 @@ def environment_hdri(doc, asset, selectedVariants):
             return
         env_map = object_list[0]
 
-        name = str(env_map["file"]["name"])
+        name = asset['uid'] + "_" + "_".join(variantConfig)
         filepath = str(env_map["file"]["path"])
 
         create_standard_environment(doc, name, filepath)

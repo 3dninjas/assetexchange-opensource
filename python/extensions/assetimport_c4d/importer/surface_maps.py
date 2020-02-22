@@ -57,7 +57,14 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
 
     # GENERAL: YOU HAVE TO ADD THE ID of the Reflection Layer to each FLAG_ID ! -> dID & sID
     # add diffuse
+
+    # add diffuse
     if "Diffuse" in surface_maps:
+        diffuse_or_albedo = surface_maps["Diffuse"]["file"]["path"]
+
+        if "Albedo" in surface_maps:
+            diffuse_or_albedo = surface_maps["Albedo"]["file"]["path"]
+
         # Lambertian Diffuse
         diffuse = mat.AddReflectionLayer()
         diffuse.SetName('Default Diffuse')
@@ -65,7 +72,7 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
         mat[c4d.REFLECTION_LAYER_MAIN_DISTRIBUTION + dID] = c4d.REFLECTION_DISTRIBUTION_LAMBERTIAN
         mat[c4d.REFLECTION_LAYER_MAIN_VALUE_SPECULAR + dID] = 1.0
         #Insert Diffuse
-        _insert_shader(doc, surface_maps["Diffuse"]["file"]["path"], c4d.REFLECTION_LAYER_COLOR_TEXTURE + dID, mat)
+        _insert_shader(doc, diffuse_or_albedo, c4d.REFLECTION_LAYER_COLOR_TEXTURE + dID, mat)
 
     # add roughness
     if "Roughness" in surface_maps:
@@ -73,11 +80,11 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
         specular = mat.AddReflectionLayer()
         specular.SetName('Default Reflection')
         sID = specular.GetDataID()
-        mat[c4d.REFLECTION_LAYER_MAIN_DISTRIBUTION+ sID] = c4d.REFLECTION_DISTRIBUTION_BECKMANN
+        mat[c4d.REFLECTION_LAYER_MAIN_DISTRIBUTION+ sID] = c4d.REFLECTION_DISTRIBUTION_GGX
 
         #Insert Roughness
         _insert_shader(doc, surface_maps["Roughness"]["file"]["path"], c4d.REFLECTION_LAYER_MAIN_SHADER_ROUGHNESS + sID, mat)
-        mat[c4d.REFLECTION_LAYER_MAIN_VALUE_ROUGHNESS + sID] = 0.3
+        mat[c4d.REFLECTION_LAYER_MAIN_VALUE_ROUGHNESS + sID] = 1.0
         mat[c4d.REFLECTION_LAYER_MAIN_VALUE_SPECULAR + sID] = 1.0
 
         # REFLECTION_FRESNEL_DIELECTRIC
