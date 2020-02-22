@@ -11,6 +11,7 @@ def _bmp_shader(doc, filepath='', channel=c4d.MATERIAL_LUMINANCE_SHADER, materia
     doc.AddUndo(c4d.UNDOTYPE_NEW, shader)
 
 def create_standard_environment(doc, name, filepath):
+    doc.StartUndo()
     # Create our Material for Sky Object
     mat = c4d.BaseMaterial(c4d.Mmaterial)
 
@@ -24,7 +25,7 @@ def create_standard_environment(doc, name, filepath):
     doc.InsertMaterial(mat)
     doc.AddUndo(c4d.UNDOTYPE_NEW, mat)
 
-    mat.Message(c4d.MSG_UPDATE)
+    # mat.Message(c4d.MSG_UPDATE)
     # mat.Update(True, True)
 
     # Create Sky Object
@@ -38,6 +39,8 @@ def create_standard_environment(doc, name, filepath):
     sky.InsertTag(tag)
     tag.SetMaterial(mat)
     doc.AddUndo(c4d.UNDOTYPE_NEW, tag)
+
+    doc.EndUndo()
     c4d.EventAdd()
 
 def environment_hdri(doc, asset, selectedVariants):
