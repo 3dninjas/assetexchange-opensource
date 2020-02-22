@@ -1,6 +1,7 @@
 assetexchange_shared
 assetexchange_c4d
 .importer.surface_maps
+.importer.surface_maps_rs
 .importer.environment_hdri
 .importer
 .pushservice
