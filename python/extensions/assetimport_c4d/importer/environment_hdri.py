@@ -5,7 +5,7 @@ def _bmp_shader(doc, filepath='', channel=c4d.MATERIAL_LUMINANCE_SHADER, materia
     shader = c4d.BaseList2D(c4d.Xbitmap)
     material[channel] = shader
 
-    shader[c4d.BITMAPSHADER_FILENAME] = filepath
+    shader[c4d.BITMAPSHADER_FILENAME] = str(filepath)
 
     material.InsertShader(shader)
     doc.AddUndo(c4d.UNDOTYPE_NEW, shader)
@@ -26,7 +26,6 @@ def create_standard_environment(doc, name, filepath):
 
     doc.InsertMaterial(mat)
     doc.AddUndo(c4d.UNDOTYPE_NEW, mat)
-
     # mat.Message(c4d.MSG_UPDATE)
     # mat.Update(True, True)
 
@@ -58,6 +57,6 @@ def environment_hdri(doc, asset, selectedVariants):
         env_map = object_list[0]
 
         name = asset['uid'] + "_" + "_".join(variantConfig)
-        filepath = str(env_map["file"]["path"])
+        filepath = env_map["file"]["path"]
 
         create_standard_environment(doc, name, filepath)
