@@ -1,3 +1,5 @@
 /dist
+dist_c4d.sh
+dist_c4d.bat
 __pycache__
 *.pyc
