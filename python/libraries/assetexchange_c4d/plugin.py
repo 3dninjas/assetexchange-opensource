@@ -9,6 +9,7 @@ import BaseHTTPServer
 import SocketServer
 import c4d
 import assetexchange_shared
+from . import mainthread
 
 
 class ThreadingHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
@@ -104,6 +105,9 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
             },
             'services': list(service_registry.keys()),
         }, indent=2))
+
+    # register main thread task handler
+    mainthread.register_main_thread_delegate()
 
 
 # def unregister_plugin(plugin_uid):

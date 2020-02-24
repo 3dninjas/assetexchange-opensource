@@ -19,7 +19,7 @@ class AssetPushService(assetexchange_shared.server.AssetPushServiceInterface):
         return True
 
     # asset gets pushed here
-    # @assetexchange_c4d.execute_on_main_thread
+    @assetexchange_c4d.execute_on_main_thread
     def Push(self, data):
         #Adding 'doc' to scope!
         doc = c4d.documents.GetActiveDocument()

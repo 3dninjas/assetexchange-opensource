@@ -1,5 +1,10 @@
 assetexchange_shared
 assetexchange_c4d
+.importer.RedshiftWrapper.ImportTester
+.importer.RedshiftWrapper.MetaName
+.importer.RedshiftWrapper.Node
+.importer.RedshiftWrapper.Redshift
+.importer.RedshiftWrapper
 .importer.surface_maps
 .importer.surface_maps_redshift
 .importer.environment_hdri

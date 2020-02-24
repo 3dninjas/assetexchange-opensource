@@ -1,2 +1,2 @@
-# from .mainthread import *
+from .mainthread import *
 from .plugin import *
