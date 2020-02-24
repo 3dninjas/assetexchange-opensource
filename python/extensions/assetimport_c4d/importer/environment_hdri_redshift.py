@@ -29,5 +29,4 @@ def environment_hdri_redshift(doc, asset, selectedVariants):
 
         name = asset['uid'] + "_" + "_".join(variantConfig)
         filepath = env_map["file"]["path"]
-
         create_redshift_environment(doc, name filepath)
