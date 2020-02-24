@@ -7,7 +7,6 @@ plugin_info = {
 }
 
 import c4d
-import os
 import assetexchange_c4d
 import assetimport_c4d
 
