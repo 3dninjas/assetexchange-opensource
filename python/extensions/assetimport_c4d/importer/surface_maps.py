@@ -124,6 +124,7 @@ def surface_maps(doc, asset, selectedVariants):
         object_list = assetexchange_shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
-        # create material object
+        # name prefix
+        # mat_name = asset['uid'].replace(".", "_") + "_" + "_".join(variantConfig)
         mat_name = asset['uid'] + "_" + "_".join(variantConfig)
         Create_PBR_Material(doc, mat_name, surface_maps)
