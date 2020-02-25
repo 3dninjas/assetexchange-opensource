@@ -8,13 +8,7 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         print "Redshift Wrapper not working..."
         return False
 
-    mat = rs.CreateMaterial(doc=doc)
-
-    if not rs.IsRedshiftMaterial(mat) or mat is None:
-        c4d.gui.MessageDialog('Please, create a new empty Redshift Material before importing.')
-        return
-
-    # Now we can start importing textures and shaders.
+    mat = rs.CreateMaterial()
     rs.SetMat(mat)
     mat.SetName(mat_name)
 
@@ -71,7 +65,6 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         filepath = surface_maps["Normal"]["file"]["path"]
         BumpNode = rs.CreateShader("BumpMap", x=-50, y=500)
         BumpNode[c4d.REDSHIFT_SHADER_BUMPMAP_INPUTTYPE] = 1
-        rs.CreateConnection(BumpNode, MatNode, 0, 3)
         BumpNode.ExposeParameter(c4d.REDSHIFT_SHADER_BUMPMAP_INPUT, c4d.GV_PORT_INPUT)
 
         TexNodeNorm = rs.CreateShader("TextureSampler", x=-200, y=500)
@@ -79,6 +72,8 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         TexNodeNorm[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(filepath)
         TexNodeNorm[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0_GAMMAOVERRIDE] = 1
         rs.CreateConnection(TexNodeNorm, BumpNode, 0, 0)
+
+        rs.CreateConnection(BumpNode, MatNode, 0, "Bump Input")
 
     # add displacement
     if "Displacement" in surface_maps:
@@ -92,6 +87,9 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         TexNodeDispl.SetName('Displacement')
         TexNodeDispl[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(filepath)
         rs.CreateConnection(TexNodeDispl, DisplNode, 0, 0)
+
+        rs.CreateConnection(DisplNode, OutPutNode, 0, "Displacement")
+
 
     # if 'EmissiveColor' in textures:
     #     texEmit = textures['EmissiveColor'] #r"H:\01_Projects\Daniel_Projects\3DC-C4D_Workflow\Export_to_C4D\Can01_default_color.png"

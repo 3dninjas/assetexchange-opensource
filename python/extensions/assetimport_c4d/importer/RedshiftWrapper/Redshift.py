@@ -67,7 +67,7 @@ class Redshift(MetaName):
             raise TypeError('material is not a redshift material')
 
     def GetAllNodes(self, removeMasterGroup=True, gvNode=None, nodeList=None):
-        """Get all nodes inside the material. 
+        """Get all nodes inside the material.
         Use redshift.GatAllNodes(), only removeMasterGroup is needed other parameters are for internal use.
 
         :param removeMasterGroup: True to remove the Shader Group that hold all other Node otherwise false.
@@ -159,7 +159,7 @@ class Redshift(MetaName):
         else:
             if self.doUndo:
                 self._gvMaster.AddUndo()
-            
+
             return Node(self._gvMaster.CreateNode(self._gvMaster.GetRoot(), shaderType, NodeBefore, x, y), self.doUndo)
 
         return None
@@ -170,7 +170,7 @@ class Redshift(MetaName):
         :param node: Tee node object to remove.
         :type node: :class:`.Node`
         :return: True if delete overthiwe False.
-        :rtype: Bool 
+        :rtype: Bool
         """
         self._CheckMatIsValid()
 
@@ -239,7 +239,7 @@ class Redshift(MetaName):
         if self.doUndo:
             self._gvMaster.AddUndo()
         return gvPortSrc.Connect(gvPortDest)
-        
+
     def CreateMaterial(self, MatType=1000, doc=None):
         """Create a new redshift material.
 
@@ -256,7 +256,7 @@ class Redshift(MetaName):
             raise TypeError('doc is not a BaseDocument')
 
         if doc is None:
-        		doc = c4d.documents.GetActiveDocument()
+            doc = c4d.documents.GetActiveDocument()
 
         if MatType < 1000 or MatType > 1010:
             raise ValueError('Invalid value for matType, must be from 1000 to 1010')
@@ -278,7 +278,7 @@ class Redshift(MetaName):
             return False
 
         return True
-        
+
     def RemoveConnection(self, port, node=None, portType=None):
         """Disconnect all connection from a given port of Nodes.
 
