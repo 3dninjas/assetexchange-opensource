@@ -94,7 +94,7 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
     if "Normal" in surface_maps:
         mat[c4d.MATERIAL_USE_NORMAL] = True
         #Flip X (Red)
-        mat[c4d.MATERIAL_NORMAL_REVERSEX] = True
+        # mat[c4d.MATERIAL_NORMAL_REVERSEX] = True
         _insert_shader(doc, surface_maps["Normal"]["file"]["path"], c4d.MATERIAL_NORMAL_SHADER, mat)
 
     # add displacement
