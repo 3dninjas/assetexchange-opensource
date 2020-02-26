@@ -13,3 +13,5 @@ npx -q pyscriptpacker@latest 3.5 "$ROOT/dist/assetimport_blender.py" "assetimpor
 npx -q pyscriptpacker@latest 3.5 "$ROOT/dist/spaceprobe_blender.py" "spaceprobe_blender" "$ROOT/extensions" "$ROOT/libraries"
 
 npx -q pyscriptpacker@latest 2.7 "$ROOT/dist/assetimport_maya.py" "assetimport_maya" "$ROOT/extensions" "$ROOT/libraries"
+
+npx -q pyscriptpacker@latest 2.7 "$ROOT/dist/assetimport_c4d.pyp" "assetimport_c4d" "$ROOT/extensions" "$ROOT/libraries"
