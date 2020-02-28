@@ -6,6 +6,8 @@ plugin_info = {
     "plugin_id": 1054523,
 }
 
+# !!! PACK HERE !!!
+
 import c4d
 import assetexchange_c4d
 import assetimport_c4d

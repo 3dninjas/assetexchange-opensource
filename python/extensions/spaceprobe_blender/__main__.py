@@ -11,6 +11,7 @@ bl_info = {
     "category": "Object"
 }
 
+# !!! PACK HERE !!!
 
 import assetexchange_blender
 import spaceprobe_blender

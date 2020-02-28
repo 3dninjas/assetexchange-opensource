@@ -5,6 +5,8 @@ plugin_info = {
     "version": "1.0.0"
 }
 
+# !!! PACK HERE !!!
+
 import assetexchange_maya
 import assetimport_maya
 
