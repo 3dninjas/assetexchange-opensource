@@ -84,11 +84,10 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
     logger.info("port=" + str(port))
 
     # write registration file
-    regfile = assetexchange_shared.server.registration_path(
+    regfile = assetexchange_shared.server.service_entry_path(
         'extension.c4d', plugin_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
-            'environment': assetexchange_shared.common.environment_name(),
             'category': 'extension.c4d',
             'type': plugin_uid,
             'pid': os.getpid(),
@@ -115,7 +114,7 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
 #     logger = logging.getLogger(plugin_uid)
 
 #     # try to remove registration file
-#     regfile = assetexchange_shared.server.registration_path(
+#     regfile = assetexchange_shared.server.service_entry_path(
 #         'extension.maya', plugin_uid)
 #     for _ in range(5):
 #         if os.path.exists(regfile):

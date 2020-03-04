@@ -2,11 +2,7 @@ import os
 import errno
 
 
-def environment_name():
-    return os.getenv('ASSETNINJA_ENVIRONMENT', 'primary')
-
-
-def runtime_path(*parts):
+def lookup_assetexchange_path(*parts):
     path = os.path.expanduser("~")
     # workaround required for 2.7, because HOME is checked on windows and sometimes set to Document folder (which is wrong)
     if os.name == 'nt':
@@ -18,7 +14,7 @@ def runtime_path(*parts):
             except KeyError:
                 drive = ''
             path = os.path.join(drive, os.environ['HOMEPATH'])
-    path = os.path.join(path, ".assetninja", *parts)
+    path = os.path.join(path, ".assetexchange", *parts)
     try:
         os.makedirs(path)
     except OSError as e:
@@ -27,9 +23,5 @@ def runtime_path(*parts):
     return path
 
 
-def environment_path(*parts):
-    return runtime_path(environment_name(), *parts)
-
-
-def registry_root_path(*parts):
-    return environment_path('registry', *parts)
+def services_path(*parts):
+    return lookup_assetexchange_path('services', *parts)

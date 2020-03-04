@@ -79,11 +79,10 @@ def register_addon(addon_uid, addon_info, AssetPushService=None, misc_services={
     logger.info("port=" + str(port))
 
     # write registration file
-    regfile = assetexchange_shared.server.registration_path(
+    regfile = assetexchange_shared.server.service_entry_path(
         'extension.blender', addon_uid)
     with open(regfile, 'w') as portfile:
         portfile.write(json.dumps({
-            'environment': assetexchange_shared.common.environment_name(),
             'category': 'extension.blender',
             'type': addon_uid,
             'pid': os.getpid(),
@@ -117,7 +116,7 @@ def unregister_addon(addon_uid):
         bpy.app.timers.unregister(mainthread.main_thread_handler)
 
     # try to remove registration file
-    regfile = assetexchange_shared.server.registration_path(
+    regfile = assetexchange_shared.server.service_entry_path(
         'extension.blender', addon_uid)
     for _ in range(5):
         if os.path.exists(regfile):
