@@ -8,7 +8,7 @@ except ImportError:
 def call_basic_func(port, service, function, input, timeout):
 
     # prepare url
-    url = "http://127.0.0.1:" + str(port) + "/.rpc/basic"
+    url = "http://127.0.0.1:" + str(port) + "/.assetexchange/basic"
 
     # prepare timeout
     if timeout == 0:

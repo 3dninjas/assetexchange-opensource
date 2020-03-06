@@ -14,7 +14,7 @@ An asset exchange protocol implementation used by Asset Ninja.
 brew install node
 
 # pack extensions
-cd ./python
+cd ./python/extensions
 ./dist.sh
 
 # list pack result
@@ -29,7 +29,7 @@ ls -l ./dist
 brew install node
 
 # pack library for embedding (example commands for Maya)
-cd ./python
+cd ./python/libraries
 ./embed.sh maya myproduct_assetexchange $HOME/dev/myproduct/assetexchange.py
 ```
 
