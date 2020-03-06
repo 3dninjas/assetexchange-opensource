@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"time"
 
-	common "github.com/assetninja/assetexchange/golang/libraries/shared/common"
+	common "github.com/assetninja/assetexchange/go/libraries/shared/common"
 	"github.com/rs/cors"
 )
 

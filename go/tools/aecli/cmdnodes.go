@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strconv"
 
-	client "github.com/assetninja/assetexchange/golang/libraries/shared/client"
+	client "github.com/assetninja/assetexchange/go/libraries/shared/client"
 
 	"github.com/olekukonko/tablewriter"
 )

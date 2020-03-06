@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"sync"
 
-	common "github.com/assetninja/assetexchange/golang/libraries/shared/common"
+	common "github.com/assetninja/assetexchange/go/libraries/shared/common"
 )
 
 type streamTracker struct {
