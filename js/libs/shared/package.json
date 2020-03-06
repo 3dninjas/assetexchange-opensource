@@ -1,5 +1,5 @@
 {
-  "name": "assetexchange-library-shared",
+  "name": "assetexchange-lib-shared",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",

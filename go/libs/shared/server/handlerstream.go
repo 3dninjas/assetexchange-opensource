@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	common "github.com/assetninja/assetexchange/go/libraries/shared/common"
+	common "github.com/assetninja/assetexchange/go/libs/shared/common"
 	"github.com/gorilla/websocket"
 )
 

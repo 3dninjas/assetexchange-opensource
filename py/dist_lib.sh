@@ -16,9 +16,9 @@ TARGET_FILE="$3"
 
 # pack assetexchange library for embedding
 case "$TOOL" in
-blender) npx -q pyscriptpacker@latest "3.5" "$TARGET_FILE" "$PRODUCT_NAME" "assetexchange_blender" "$ROOT/libraries" ;;
-maya) npx -q pyscriptpacker@latest "2.7" "$TARGET_FILE" "$PRODUCT_NAME" "assetexchange_maya" "$ROOT/libraries" ;;
-c4d) npx -q pyscriptpacker@latest "2.7" "$TARGET_FILE" "$PRODUCT_NAME" "assetexchange_c4d" "$ROOT/libraries" ;;
+blender) npx -q pyscriptpacker@latest "3.5" "$TARGET_FILE" "$PRODUCT_NAME" "assetexchange_blender" "$ROOT/libs" ;;
+maya) npx -q pyscriptpacker@latest "2.7" "$TARGET_FILE" "$PRODUCT_NAME" "assetexchange_maya" "$ROOT/libs" ;;
+c4d) npx -q pyscriptpacker@latest "2.7" "$TARGET_FILE" "$PRODUCT_NAME" "assetexchange_c4d" "$ROOT/libs" ;;
 *)
     echo "Unknown tool name!"
     exit 1

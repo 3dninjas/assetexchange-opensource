@@ -1,8 +1,0 @@
-github.com/assetninja/assetexchange v0.0.0-20200304234156-5e4d29a819d8 h1:N9pIjFyYLOZdjwNrTM12aJuQcI/2gboqygYNdC1duw0=
-github.com/assetninja/assetexchange v0.0.0-20200306142852-b3fd7dc61204 h1:lxo/+k1sQNJhIeRBHCVsqkWW9r7jlTqm4IALRj8SetI=
-github.com/assetninja/assetexchange/golang/libraries/shared v0.0.0-20200306142852-b3fd7dc61204 h1:28rWHnrjC9ieEgzn4r+XT2YYGCAsoO5U2uMrvlNLbEo=
-github.com/assetninja/assetexchange/golang/libraries/shared v0.0.0-20200306142852-b3fd7dc61204/go.mod h1:KgxIqmy9AYrpsE319ggfcdNIQi0+KZOS0TRhgYiBtW4=
-github.com/gorilla/websocket v1.4.1 h1:q7AeDBpnBk8AogcD4DSag/Ukw/KV+YhzLj2bP5HvKCM=
-github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
-github.com/rs/cors v1.7.0 h1:+88SsELBHx5r+hZ8TCkggzSstaWNbDvThkVK8H6f9ik=
-github.com/rs/cors v1.7.0/go.mod h1:gFx+x8UowdsKA9AchylcLynDq+nNFfI8FkUZdN/jGCU=

@@ -13,7 +13,7 @@ import (
 	"syscall"
 	"time"
 
-	common "github.com/assetninja/assetexchange/go/libraries/shared/common"
+	common "github.com/assetninja/assetexchange/go/libs/shared/common"
 )
 
 // LookupNodes retrieves all currently registered nodes

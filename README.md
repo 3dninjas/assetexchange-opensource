@@ -15,7 +15,7 @@ brew install node
 
 # pack extensions
 cd ./py
-./dist_extensions.sh
+./dist_exts.sh
 
 # list pack result
 ls -l ./dist
@@ -30,7 +30,7 @@ brew install node
 
 # pack library for embedding (example commands for Maya)
 cd ./py
-./dist_library.sh maya myproduct_assetexchange $HOME/dev/myproduct/assetexchange.py
+./dist_lib.sh maya myproduct_assetexchange $HOME/dev/myproduct/assetexchange.py
 ```
 
 This is how you can use the packed library:
