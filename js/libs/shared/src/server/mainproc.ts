@@ -8,8 +8,17 @@ import { newServer, shutdownServer } from './server';
 export async function mainProc(
   category: string, type: string, registry: Registry,
   onStarted: ((address: net.AddressInfo) => Promise<void>) | null,
-  onShutdown: (() => Promise<void>) | null
+  onShutdown: (() => Promise<void>) | null,
+  shutdownSignals: NodeJS.Signals[] | null
 ): Promise<void> {
+
+  // default shutdown signals
+  if (!shutdownSignals) {
+    shutdownSignals = [
+      'SIGINT',
+      'SIGTERM'
+    ];
+  }
 
   // resume stdin if paused
   const stdinWasPaused = process.stdin.isPaused();
@@ -27,13 +36,15 @@ export async function mainProc(
 
     // wait for stop signal
     await new Promise(resolve => {
-      function onSigInt() {
-        process.off('SIGINT', onSigInt);
-        process.off('SIGTERM', onSigInt);
+      function onSigShutdown() {
+        shutdownSignals?.forEach(
+          sigName => process.off(sigName, onSigShutdown)
+        );
         resolve();
       }
-      process.on('SIGINT', onSigInt);
-      process.on('SIGTERM', onSigInt);
+      shutdownSignals?.forEach(
+        sigName => process.on(sigName, onSigShutdown)
+      );
     });
 
     // shutdown rpc server gracefully
