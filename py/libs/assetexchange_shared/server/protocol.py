@@ -59,7 +59,7 @@ class HttpServerRequestHandler(BaseHTTPRequestHandler):
                 if not callable(function):
                     raise RuntimeError('unknown_function')
                 # call function (will be delegated to main thread automatically, when annotated)
-                logger.info('executing ' + req_msg['address'])
+                #logger.info('executing ' + req_msg['address'])
                 res_msg = {
                     "id": req_msg["id"],
                     "output": function(req_msg["input"]),
