@@ -20,7 +20,8 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         if node.GetType() == "Output": OutPutNode = node
         elif node.GetType() == "Material": MatNode = node
 
-    MatNode[c4d.REDSHIFT_SHADER_MATERIAL_REFL_FRESNEL_MODE] = 1
+    #Set fresnel-mode to "IOR"
+    MatNode[c4d.REDSHIFT_SHADER_MATERIAL_REFL_FRESNEL_MODE] = 3
 
     # add diffuse
     if "Diffuse" in surface_maps:
@@ -39,16 +40,15 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
     if 'Roughness' in surface_maps:
         MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_REFL_ROUGHNESS, c4d.GV_PORT_INPUT)
         filepath = surface_maps["Roughness"]["file"]["path"]
-        TexNodeGloss=rs.CreateShader("TextureSampler", x=-500, y=300)
+        TexNodeGloss=rs.CreateShader("TextureSampler", x=-100, y=300)
         TexNodeGloss.SetName('Roughness')
         TexNodeGloss[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(filepath)
-        TexNodeGloss[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0_GAMMAOVERRIDE] = 1
-
+        # TexNodeGloss[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0_GAMMAOVERRIDE] = 1
         # invert = rs.CreateShader("RSMathInv", x=-300, y=300)
         # rs.CreateConnection(invert, MatNode, 0, 1)
         # invert.ExposeParameter(c4d.REDSHIFT_SHADER_RSMATHINV_INPUT, c4d.GV_PORT_INPUT)
         # rs.CreateConnection(TexNodeGloss, invert, 0, 0)
-        rs.CreateConnection(TexNodeGloss, MatNode, 0, 0)
+        rs.CreateConnection(TexNodeGloss, MatNode, 0, 1)
         
     # add specular
     if 'Specular' in surface_maps:
