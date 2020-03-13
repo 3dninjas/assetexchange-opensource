@@ -44,11 +44,12 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         TexNodeGloss[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(filepath)
         TexNodeGloss[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0_GAMMAOVERRIDE] = 1
 
-        invert = rs.CreateShader("RSMathInv", x=-300, y=300)
-        rs.CreateConnection(invert, MatNode, 0, 1)
-        invert.ExposeParameter(c4d.REDSHIFT_SHADER_RSMATHINV_INPUT, c4d.GV_PORT_INPUT)
-        rs.CreateConnection(TexNodeGloss, invert, 0, 0)
-
+        # invert = rs.CreateShader("RSMathInv", x=-300, y=300)
+        # rs.CreateConnection(invert, MatNode, 0, 1)
+        # invert.ExposeParameter(c4d.REDSHIFT_SHADER_RSMATHINV_INPUT, c4d.GV_PORT_INPUT)
+        # rs.CreateConnection(TexNodeGloss, invert, 0, 0)
+        rs.CreateConnection(TexNodeGloss, MatNode, 0, 0)
+        
     # add specular
     if 'Specular' in surface_maps:
         MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_REFL_REFLECTIVITY, c4d.GV_PORT_INPUT)
