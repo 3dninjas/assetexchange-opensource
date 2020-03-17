@@ -24,6 +24,14 @@ def surface_maps(asset, selectedVariants):
         node_y_delta = 400
         node_x = -500
 
+        # Texture Mapping nodes
+        coord = nodes.new('ShaderNodeTexCoord')
+        coord.location = (-1400, 300)
+
+        mapping = nodes.new('ShaderNodeMapping')
+        mapping.location = (-1200, 300)
+        mat.node_tree.links.new(coord.outputs['UV'], mapping.inputs['Vector'])
+
         # add diffuse
         if "Diffuse" in surface_maps:
             # texture node
@@ -37,6 +45,8 @@ def surface_maps(asset, selectedVariants):
             # position node
             diff_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
+            # connect to mapping
+            mat.node_tree.links.new(mapping.outputs['Vector'], diff_tex_node.inputs['Vector'])
 
         # add specular
         if "Specular" in surface_maps:
@@ -51,6 +61,8 @@ def surface_maps(asset, selectedVariants):
             # position node
             spec_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
+            # connect to mapping
+            mat.node_tree.links.new(mapping.outputs['Vector'], spec_tex_node.inputs['Vector'])
 
         # add roughness
         if "Roughness" in surface_maps:
@@ -65,6 +77,8 @@ def surface_maps(asset, selectedVariants):
             # position node
             rough_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
+            # connect to mapping
+            mat.node_tree.links.new(mapping.outputs['Vector'], rough_tex_node.inputs['Vector'])
 
         # add normal
         if "Normal" in surface_maps:
@@ -86,6 +100,8 @@ def surface_maps(asset, selectedVariants):
             norm_tex_node.location = (node_x - 400, node_y_next)
             norm_map_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
+            # connect to mapping
+            mat.node_tree.links.new(mapping.outputs['Vector'], norm_tex_node.inputs['Vector'])
 
         # add displacement
         if "Displacement" in surface_maps:
@@ -109,3 +125,5 @@ def surface_maps(asset, selectedVariants):
             disp_tex_node.location = (node_x - 400, node_y_next)
             disp_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
+            # connect to mapping
+            mat.node_tree.links.new(mapping.outputs['Vector'], disp_tex_node.inputs['Vector'])
