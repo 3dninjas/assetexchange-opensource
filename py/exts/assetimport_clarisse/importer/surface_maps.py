@@ -1,4 +1,75 @@
 import assetexchange_shared
+import os
+import ix
+
+
+def map_maps(shader_name, surface_maps, shader):
+    shader_name = str(shader_name)
+    default_ctx = ix.cmds.CreateContext(shader_name, "Global", "project://scene")
+    
+    if shader == "disney":
+        material = ix.cmds.CreateObject(shader_name, "MaterialPhysicalDisneyPrincipled", "Global", default_ctx)
+
+        if "Diffuse" in surface_maps:
+            diffuse = str(surface_maps["Diffuse"]["file"]["path"])
+            channel_name = shader_name+"_Diffuse"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = diffuse
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'Clarisse|sRGB'
+            set_tex = str(default_ctx)+"/"+str(shader_name)
+            ix.cmds.SetTexture([set_tex+".base_color"], set_tex+"_Diffuse")
+
+        if "Albedo" in surface_maps:
+            albedo = str(surface_maps["Albedo"]["file"]["path"])
+            channel_name = shader_name+"_Albedo"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = albedo
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'Clarisse|sRGB'
+            set_tex = str(default_ctx)+"/"+str(shader_name)
+            ix.cmds.SetTexture([set_tex+".base_color"], set_tex+"_Albedo")
+
+        if "Roughness" in surface_maps:
+            rough = str(surface_maps["Roughness"]["file"]["path"])
+            channel_name = shader_name+"_Roughness"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = rough
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'linear'
+            set_tex = str(default_ctx)+"/"+str(shader_name)
+            ix.cmds.SetTexture([set_tex+".roughness"], set_tex+"_Roughness")           
+
+        if "Normal" in surface_maps:
+            normal = str(surface_maps["Normal"]["file"]["path"])
+            channel_name = shader_name+"_Normal"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = normal
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'linear'
+            txnrm_util=ix.cmds.CreateObject(channel_name+"_bmp", "TextureBumpMap", default_ctx)
+            txnrm_util.attrs.input = 0.02
+            set_tex = str(default_ctx)+"/"+str(shader_name)
+            ix.cmds.SetTexture([set_tex+".normal_input"], set_tex+"_Normal_bmp")
+            ix.cmds.SetTexture([set_tex+"_Normal_bmp.input"], set_tex+"_Normal")
+
+
+
+        if "Displacement" in surface_maps:
+            displacement = str(surface_maps["Displacement"]["file"]["path"])
+            channel_name = shader_name+"_Displacement"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = displacement
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'linear'
+            #set_tex = str(default_ctx)+"/"+str(shader_name)
+            #ix.cmds.SetTexture([set_tex+".base_color"], set_tex+"_Displacement")
+
 
 def surface_maps(asset, selectedVariants):
     # explode variants
@@ -12,3 +83,7 @@ def surface_maps(asset, selectedVariants):
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
         # TODO
+        print(surface_maps)
+        shader_name = asset['uid'].split(".")[1]
+        shader_type = "disney"
+        map_maps(shader_name, surface_maps, shader_type)
