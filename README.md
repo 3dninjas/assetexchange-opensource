@@ -12,6 +12,7 @@ An asset exchange protocol implementation used by Asset Ninja.
 # prerequisites
 # npm and npx
 brew install node
+brew install coreutils
 
 # pack extensions
 cd ./py
