@@ -9,7 +9,6 @@ import BaseHTTPServer
 import SocketServer
 import assetexchange_shared
 
-print "loading plugin"
 
 class ThreadingHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     """Handle requests in a separate thread."""
@@ -20,7 +19,6 @@ _http_servers = dict()
 
 def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_services={}):
     # prevent double registration
-    print "registering"
     global _http_servers
     if plugin_uid in _http_servers:
         raise RuntimeError('add-on already registered')
@@ -75,10 +73,9 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
     )
     thread = threading.Thread(
         target=_http_servers[plugin_uid].serve_forever)
-    # note: required for maya exit, otherwhise it will block (even though we have an atexit handler)
-    thread.deamon(True)
+    # note: required for houdini exit, otherwhise it will block (even though we have an atexit handler)
+    thread.setDaemon(True)
     thread.start()
-    print "thread started"
     # retrieve port (no race condition here, as it is available right after construction)
     port = _http_servers[plugin_uid].server_address[1]
     logger.info("port=" + str(port))
@@ -109,7 +106,6 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
 def unregister_plugin(plugin_uid):
     # fetch logger
     logger = logging.getLogger(plugin_uid)
-    print "unloading plugin"
     # try to remove registration file
     regfile = assetexchange_shared.server.service_entry_path(
         'extension.houdini', plugin_uid)
