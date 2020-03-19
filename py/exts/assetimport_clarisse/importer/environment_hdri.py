@@ -57,6 +57,5 @@ def environment_hdri(asset, selectedVariants):
         asset_name = asset['uid']
         path_to_asset = env_map["file"]["path"]
         asset_name = asset_name.split(".")[1]
-        #print asset_name
         create_dome(asset_name,path_to_asset)
         ix.log_info("Run done.")
