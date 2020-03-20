@@ -1,7 +1,20 @@
 import re
-
+import hou
 import assetexchange_shared
 
+def create_dome(name, path,renderer):
+    # Initialize parent node variable.
+    print("Creating mantra light")
+    if locals().get("hou_parent") is None:
+        hou_parent = hou.node("/obj")
+    
+    light_setup = hou_parent.createNode("envlight", name, run_init_scripts=False, 
+                                        load_contents=True, exact_type_name=True)
+    hou_parm = light_setup.parm("env_map")
+    hou_parm.lock(False)
+    hou_parm.set(path)
+    hou_parm.setAutoscope(False)
+    print("Light creation done.")
 
 def environment_hdri(asset, selectedVariants):
     # explode variants
@@ -30,18 +43,9 @@ def environment_hdri(asset, selectedVariants):
                     resolution = int(res_str)
 
         # name prefix
-        name = asset['uid'].replace(".", "_") + "_" + "_".join(variantConfig)
-        print name
-        # create texture
-        #env_tex_node = maya.cmds.shadingNode(
-        #    'file', asTexture=True, name=(name + "_env_tex"))
-        #maya.cmds.setAttr(env_tex_node+".ftn",
-        #                  env_map["file"]["path"], type="string")
-        #maya.cmds.setAttr(env_tex_node+".cs", "Raw", type="string")
 
-        # create skydome
-        #env_skydome_node = mtoa.utils.createLocator(
-        #    "aiSkyDomeLight", asLight=True)
-        #maya.cmds.setAttr(env_skydome_node[0]+".resolution", resolution)
-        #maya.cmds.connectAttr(env_tex_node+".outColor",
-        #                      env_skydome_node[0] + ".color")
+        asset_name = asset['uid']
+        path_to_asset = env_map["file"]["path"]
+        asset_name = asset_name.split(".")[1]
+        renderer_setup = "mantra"
+        create_dome(asset_name,path_to_asset,renderer_setup)
