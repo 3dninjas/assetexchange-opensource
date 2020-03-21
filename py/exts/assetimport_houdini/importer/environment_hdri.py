@@ -4,7 +4,6 @@ import assetexchange_shared
 
 def create_dome(name, path,renderer):
     # Initialize parent node variable.
-    print("Creating mantra light")
     if locals().get("hou_parent") is None:
         hou_parent = hou.node("/obj")
     
@@ -14,7 +13,6 @@ def create_dome(name, path,renderer):
     hou_parm.lock(False)
     hou_parm.set(path)
     hou_parm.setAutoscope(False)
-    print("Light creation done.")
 
 def environment_hdri(asset, selectedVariants):
     # explode variants
