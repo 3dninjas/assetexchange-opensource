@@ -1,7 +1,7 @@
 plugin_info = {
     "name": "Asset Ninja Asset Import",
     "description": "Handles asset pushes from Asset Ninja.",
-    "author": "Niklas Salmoukas",
+    "author": "Aleks Katunar",
     "version": "1.0.0"
 }
 
