@@ -87,8 +87,6 @@ def surface_maps(asset, selectedVariants):
         object_list = assetexchange_shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
-        # TODO
-        print(surface_maps)
         shader_name = asset['uid'].split(".")[1]
         shader_type = "disney"
         map_maps(shader_name, surface_maps, shader_type)
