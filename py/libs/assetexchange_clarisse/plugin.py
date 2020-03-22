@@ -105,7 +105,7 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
                 'extension.author': plugin_info['author'],
                 'extension.version': plugin_info['version'],
                 'clarisse.executable': sys.executable,
-                'clarisse.version': 'TODO',  # TODO
+                'clarisse.version': ix.application.get_version(),
             },
             'services': list(service_registry.keys()),
         }, indent=2))
