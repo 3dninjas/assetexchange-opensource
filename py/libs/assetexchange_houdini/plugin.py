@@ -7,6 +7,7 @@ import atexit
 import logging
 import BaseHTTPServer
 import SocketServer
+import hou
 import assetexchange_shared
 
 
@@ -97,7 +98,7 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
                 'extension.author': plugin_info['author'],
                 'extension.version': plugin_info['version'],
                 'houdini.executable': sys.executable,
-                'houdini.version': "17.5.317",
+                'houdini.version': hou.applicationVersionString(),
             },
             'services': list(service_registry.keys()),
         }, indent=2))
