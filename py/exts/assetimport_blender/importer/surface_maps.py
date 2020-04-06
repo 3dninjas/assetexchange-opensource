@@ -32,9 +32,6 @@ def surface_maps(asset, selectedVariants):
         mapping.location = (-1200, 300)
         mat.node_tree.links.new(coord.outputs['UV'], mapping.inputs['Vector'])
 
-        # detect workflow
-        is_specular_workflow = "Specular" in surface_maps and not "Metalness" in surface_maps
-
         # add diffuse
         if "Base Color" in surface_maps or "Albedo" in surface_maps or "Diffuse" in surface_maps:
             # texture node
@@ -55,7 +52,7 @@ def surface_maps(asset, selectedVariants):
             mat.node_tree.links.new(mapping.outputs['Vector'], diff_tex_node.inputs['Vector'])
 
         # add metalness
-        if not is_specular_workflow and "Metalness" in surface_maps:
+        if "Metalness" in surface_maps:
             # texture node
             met_tex_node = nodes.new("ShaderNodeTexImage")
             met_tex_node.image = bpy.data.images.load(surface_maps["Metalness"]["file"]["path"])
@@ -71,7 +68,7 @@ def surface_maps(asset, selectedVariants):
             mat.node_tree.links.new(mapping.outputs['Vector'], met_tex_node.inputs['Vector'])
 
         # add specular
-        if is_specular_workflow and "Specular" in surface_maps:
+        if "Specular" in surface_maps and not "Metalness" in surface_maps:
             # texture node
             spec_tex_node = nodes.new('ShaderNodeTexImage')
             spec_tex_node.image = bpy.data.images.load(surface_maps["Specular"]["file"]["path"])
@@ -139,8 +136,8 @@ def surface_maps(asset, selectedVariants):
         if "Displacement" in surface_maps:
             # displacement node
             disp_node = nodes.new("ShaderNodeDisplacement")
-            disp_node.inputs[0].default_value = 0.5
-            disp_node.inputs[1].default_value = 0.5 - 0.1 * surface_maps["Displacement"]["details"].get("scale", 1)
+            disp_node.inputs[0].default_value = 0.5 + 0.1 * surface_maps["Displacement"]["details"].get("scale", 1)
+            disp_node.inputs[1].default_value = 0.5
             # texture node
             disp_tex_node = nodes.new('ShaderNodeTexImage')
             disp_tex_node.image = bpy.data.images.load(surface_maps["Displacement"]["file"]["path"])
