@@ -136,8 +136,8 @@ def surface_maps(asset, selectedVariants):
         if "Displacement" in surface_maps:
             # displacement node
             disp_node = nodes.new("ShaderNodeDisplacement")
-            disp_node.inputs[0].default_value = 0.5 + 0.1 * surface_maps["Displacement"]["details"].get("scale", 1)
-            disp_node.inputs[1].default_value = 0.5
+            disp_node.inputs[1].default_value = 0
+            disp_node.inputs[2].default_value = 0.1
             # texture node
             disp_tex_node = nodes.new('ShaderNodeTexImage')
             disp_tex_node.image = bpy.data.images.load(surface_maps["Displacement"]["file"]["path"])
@@ -145,7 +145,7 @@ def surface_maps(asset, selectedVariants):
             disp_tex_node.image.colorspace_settings.name = "Non-Color"
             # link to bsdf
             mat.node_tree.links.new(
-                disp_node.inputs[2], disp_tex_node.outputs[0])
+                disp_node.inputs[0], disp_tex_node.outputs[0])
             mat.node_tree.links.new(
                 nodes.get("Material Output").inputs[2], disp_node.outputs[0])
             # enable displacement
