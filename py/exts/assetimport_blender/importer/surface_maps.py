@@ -108,11 +108,11 @@ def surface_maps(asset, selectedVariants):
             norm_tex_node.image.colorspace_settings.name = "Non-Color"
             # invert node
             norm_curve_node = nodes.new("ShaderNodeRGBCurve")
-            if surface_maps["Normal"]["details"].get("handedness", "right") == "left":
-                norm_curve_node.mapping.initialize()
-                norm_curve_node.mapping.curves[1].points[0].location[1] = 1
-                norm_curve_node.mapping.curves[1].points[1].location[1] = 0
-                norm_curve_node.mapping.update()
+            norm_curve_node.mapping.initialize()
+            norm_curve_node.mapping.curves[1].points[0].location[1] = 1
+            norm_curve_node.mapping.curves[1].points[1].location[1] = 0
+            norm_curve_node.mapping.update()
+            norm_curve_node.mute = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
             # normal map node
             norm_map_node = nodes.new("ShaderNodeNormalMap")
             norm_map_node.space = "TANGENT"
