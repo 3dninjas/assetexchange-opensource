@@ -59,12 +59,10 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
     # add diffuse
 
     # add diffuse
-    if "Diffuse" in surface_maps:
-        diffuse_or_albedo = surface_maps["Diffuse"]["file"]["path"]
-
-        if "Albedo" in surface_maps:
-            diffuse_or_albedo = surface_maps["Albedo"]["file"]["path"]
-
+    if "Base Color" in surface_maps or "Albedo" in surface_maps or "Diffuse" in surface_maps:
+        diffuse_path = surface_maps.get("Base Color",
+                                        surface_maps.get("Albedo",
+                                                         surface_maps.get("Diffuse")))["file"]["path"]
         # Lambertian Diffuse
         diffuse = mat.AddReflectionLayer()
         diffuse.SetName('Default Diffuse')
@@ -72,7 +70,17 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
         mat[c4d.REFLECTION_LAYER_MAIN_DISTRIBUTION + dID] = c4d.REFLECTION_DISTRIBUTION_LAMBERTIAN
         mat[c4d.REFLECTION_LAYER_MAIN_VALUE_SPECULAR + dID] = 1.0
         #Insert Diffuse
-        _insert_shader(doc, diffuse_or_albedo, c4d.REFLECTION_LAYER_COLOR_TEXTURE + dID, mat)
+        _insert_shader(doc, diffuse_path, c4d.REFLECTION_LAYER_COLOR_TEXTURE + dID, mat)
+
+    # add metalness
+    if "Metalness" in surface_maps:
+        metalness_path = surface_maps["Metalness"]["file"]["path"]
+        pass # TODO
+
+    # add specular
+    if "Specular" in surface_maps and not "Metalness" in surface_maps:
+        specular_path = surface_maps["Specular"]["file"]["path"]
+        pass # TODO
 
     # add roughness
     if "Roughness" in surface_maps:
@@ -92,6 +100,8 @@ def Create_PBR_Material(doc, mat_name, surface_maps):
 
     # add normal
     if "Normal" in surface_maps:
+        normal_handedness_right = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
+        # TODO: handedness (right = opengl, left = directx)
         mat[c4d.MATERIAL_USE_NORMAL] = True
         #Flip X (Red)
         # mat[c4d.MATERIAL_NORMAL_REVERSEX] = True

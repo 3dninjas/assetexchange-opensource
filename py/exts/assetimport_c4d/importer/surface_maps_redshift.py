@@ -24,20 +24,33 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
     MatNode[c4d.REDSHIFT_SHADER_MATERIAL_REFL_FRESNEL_MODE] = 3
 
     # add diffuse
-    if "Diffuse" in surface_maps:
-        diffuse_or_albedo = surface_maps["Diffuse"]["file"]["path"]
-
-        if "Albedo" in surface_maps:
-            diffuse_or_albedo = surface_maps["Albedo"]["file"]["path"]
-
+    if "Base Color" in surface_maps or "Albedo" in surface_maps or "Diffuse" in surface_maps:
+        diffuse_path = surface_maps.get("Base Color",
+                                        surface_maps.get("Albedo",
+                                                         surface_maps.get("Diffuse")))["file"]["path"]
         MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_DIFFUSE_COLOR, c4d.GV_PORT_INPUT)
         texNodeCol = rs.CreateShader("TextureSampler", x=-100, y=200)
         texNodeCol.SetName('Diffuse')
-        texNodeCol[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(diffuse_or_albedo)
+        texNodeCol[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(diffuse_path)
         rs.CreateConnection(texNodeCol, MatNode, 0, 0)
 
+    # add metalness
+    if "Metalness" in surface_maps:
+        metalness_path = surface_maps["Metalness"]["file"]["path"]
+        pass # TODO
+
+    # add specular
+    if "Specular" in surface_maps and not "Metalness" in surface_maps:
+        MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_REFL_REFLECTIVITY, c4d.GV_PORT_INPUT)
+        filepath = surface_maps["Specular"]["file"]["path"]
+        TexNodeMetal=rs.CreateShader("TextureSampler", x=-100, y=400)
+        TexNodeMetal.SetName('Specular')
+        TexNodeMetal[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(filepath)
+        #TexNodeMetal[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0_GAMMAOVERRIDE] = 1
+        rs.CreateConnection(TexNodeMetal, MatNode, 0, 2)
+
     # add roughness
-    if 'Roughness' in surface_maps:
+    if "Roughness" in surface_maps:
         MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_REFL_ROUGHNESS, c4d.GV_PORT_INPUT)
         filepath = surface_maps["Roughness"]["file"]["path"]
         TexNodeGloss=rs.CreateShader("TextureSampler", x=-100, y=300)
@@ -49,19 +62,12 @@ def Create_Redshift_Material(doc, mat_name, surface_maps):
         # invert.ExposeParameter(c4d.REDSHIFT_SHADER_RSMATHINV_INPUT, c4d.GV_PORT_INPUT)
         # rs.CreateConnection(TexNodeGloss, invert, 0, 0)
         rs.CreateConnection(TexNodeGloss, MatNode, 0, 1)
-        
-    # add specular
-    if 'Specular' in surface_maps:
-        MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_REFL_REFLECTIVITY, c4d.GV_PORT_INPUT)
-        filepath = surface_maps["Roughness"]["file"]["path"]
-        TexNodeMetal=rs.CreateShader("TextureSampler", x=-100, y=400)
-        TexNodeMetal.SetName('Specular')
-        TexNodeMetal[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0, c4d.REDSHIFT_FILE_PATH] = str(filepath)
-        #TexNodeMetal[c4d.REDSHIFT_SHADER_TEXTURESAMPLER_TEX0_GAMMAOVERRIDE] = 1
-        rs.CreateConnection(TexNodeMetal, MatNode, 0, 2)
 
     # add normal
-    if 'Normal' in surface_maps:
+    if "Normal" in surface_maps:
+        normal_handedness_right = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
+        # TODO: handedness (right = opengl, left = directx)
+
         MatNode.ExposeParameter(c4d.REDSHIFT_SHADER_MATERIAL_BUMP_INPUT, c4d.GV_PORT_INPUT)
         filepath = surface_maps["Normal"]["file"]["path"]
         BumpNode = rs.CreateShader("BumpMap", x=-50, y=500)
