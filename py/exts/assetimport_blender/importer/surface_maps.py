@@ -26,10 +26,10 @@ def surface_maps(asset, selectedVariants):
 
         # Texture Mapping nodes
         coord = nodes.new('ShaderNodeTexCoord')
-        coord.location = (-1400, 300)
+        coord.location = (-2000, 300)
 
         mapping = nodes.new('ShaderNodeMapping')
-        mapping.location = (-1200, 300)
+        mapping.location = (-1600, 300)
         mat.node_tree.links.new(coord.outputs['UV'], mapping.inputs['Vector'])
 
         # add diffuse
