@@ -11,28 +11,33 @@ def map_maps(shader_name, surface_maps, shader):
     if shader == "disney":
         material = ix.cmds.CreateObject(shader_name, "MaterialPhysicalDisneyPrincipled", "Global", default_ctx)
 
-        if "Diffuse" in surface_maps:
-            diffuse = str(surface_maps["Diffuse"]["file"]["path"])
-            channel_name = shader_name+"_Diffuse"
+        # add base color/albedo/diffuse
+        if "Base Color" in surface_maps or "Albedo" in surface_maps or "Diffuse" in surface_maps:
+            basecolor = str(surface_maps.get("Base Color",
+                                             surface_maps.get("Albedo",
+                                                              surface_maps.get("Diffuse")))["file"]["path"])
+            channel_name = shader_name+"_BaseColor"
             tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
-            tx.attrs.filename = diffuse
+            tx.attrs.filename = basecolor
             tx.attrs.color_space_auto_detect = 0
             tx.attrs.mipmap_filtering_mode = 1
             tx.attrs.file_color_space = 'Clarisse|sRGB'
             set_tex = str(default_ctx)+"/"+str(shader_name)
-            ix.cmds.SetTexture([set_tex+".base_color"], set_tex+"_Diffuse")
+            ix.cmds.SetTexture([set_tex+".base_color"], set_tex+"_BaseColor")
 
-        if "Albedo" in surface_maps:
-            albedo = str(surface_maps["Albedo"]["file"]["path"])
-            channel_name = shader_name+"_Albedo"
-            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
-            tx.attrs.filename = albedo
-            tx.attrs.color_space_auto_detect = 0
-            tx.attrs.mipmap_filtering_mode = 1
-            tx.attrs.file_color_space = 'Clarisse|sRGB'
-            set_tex = str(default_ctx)+"/"+str(shader_name)
-            ix.cmds.SetTexture([set_tex+".base_color"], set_tex+"_Albedo")
+        # add metalness
+        if "Metalness" in surface_maps:
+            metalness = surface_maps["Metalness"]["file"]["path"]
+            # TODO
+            pass
 
+        # add specular
+        if "Specular" in surface_maps and not "Metalness" in surface_maps:
+            specular = surface_maps["Specular"]["file"]["path"]
+            # TODO
+            pass
+
+        # add roughness
         if "Roughness" in surface_maps:
             rough = str(surface_maps["Roughness"]["file"]["path"])
             channel_name = shader_name+"_Roughness"
@@ -46,7 +51,10 @@ def map_maps(shader_name, surface_maps, shader):
             ix.cmds.SetValues([set_tex+"_Roughness.single_channel_file_behavior"], ["1"])
             ix.cmds.SetValues([set_tex+".specular"], ["0.2"])
 
+        # add normal
         if "Normal" in surface_maps:
+            normal_handedness_right = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
+            # TODO: handedness (right = opengl, left = directx)
             normal = str(surface_maps["Normal"]["file"]["path"])
             channel_name = shader_name+"_Normal"
             tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
@@ -59,6 +67,7 @@ def map_maps(shader_name, surface_maps, shader):
             ix.cmds.SetTexture([set_tex+".normal_input"], set_tex+"_Normal_nrm")
             ix.cmds.SetTexture([set_tex+"_Normal_nrm.input"], set_tex+"_Normal")
 
+        # add displacement
         if "Displacement" in surface_maps:
             displacement = str(surface_maps["Displacement"]["file"]["path"])
             channel_name = shader_name+"_Displacement"
