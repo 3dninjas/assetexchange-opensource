@@ -1,5 +1,5 @@
 import assetexchange_shared
-import os
+import os, re
 import ix
 
 
@@ -95,8 +95,12 @@ def surface_maps(asset, selectedVariants):
         # get all maps and convert to dictionary by map type
         object_list = assetexchange_shared.asset.filter_objects_by_variant_config(asset, 'Primary', variantLabels, variantConfig)
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
-
+        
         shader_name = asset['uid'].split(".")[1]
+        
+        #normalize to underscore
+        shader_name = shader_name.replace("-","_")
+        
         shader_type = "disney"
         map_maps(shader_name, surface_maps, shader_type)
         ix.log_info("Basic shader setup created.")
