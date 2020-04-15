@@ -1,5 +1,5 @@
 import assetexchange_shared
-import os
+import os, re
 import ix
 
 
@@ -88,6 +88,10 @@ def surface_maps(asset, selectedVariants):
         surface_maps = {surface_map["type"]: surface_map for surface_map in object_list}
 
         shader_name = asset['uid'].split(".")[1]
+        
+        #normalize names to underscore
+        shader_name = shader_name.replace("-","_")
+        
         shader_type = "disney"
         map_maps(shader_name, surface_maps, shader_type)
         ix.log_info("Basic shader setup created.")
