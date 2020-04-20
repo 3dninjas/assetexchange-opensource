@@ -27,15 +27,28 @@ def map_maps(shader_name, surface_maps, shader):
 
         # add metalness
         if "Metalness" in surface_maps:
-            metalness = surface_maps["Metalness"]["file"]["path"]
-            # TODO
-            pass
+            metalness = str(surface_maps["Metalness"]["file"]["path"])
+            print "tex: >>> ", metalness
+            channel_name = shader_name+"_Metallic"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = metalness
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'Clarisse|sRGB'
+            set_tex = str(default_ctx)+"/"+str(shader_name)
+            ix.cmds.SetTexture([set_tex+".metallic"], set_tex+"_Metallic")
 
         # add specular
         if "Specular" in surface_maps and not "Metalness" in surface_maps:
-            specular = surface_maps["Specular"]["file"]["path"]
-            # TODO
-            pass
+            specular = str(surface_maps["Specular"]["file"]["path"])
+            channel_name = shader_name+"_Specular"
+            tx = ix.cmds.CreateObject(channel_name, 'TextureMapFile', default_ctx)
+            tx.attrs.filename = metalness
+            tx.attrs.color_space_auto_detect = 0
+            tx.attrs.mipmap_filtering_mode = 1
+            tx.attrs.file_color_space = 'Clarisse|sRGB'
+            set_tex = str(default_ctx)+"/"+str(shader_name)
+            ix.cmds.SetTexture([set_tex+".specular"], set_tex+"_Specular")
 
         # add roughness
         if "Roughness" in surface_maps:
@@ -100,7 +113,7 @@ def surface_maps(asset, selectedVariants):
         
         #normalize to underscore
         shader_name = shader_name.replace("-","_")
-        
+        print surface_maps
         shader_type = "disney"
         map_maps(shader_name, surface_maps, shader_type)
         ix.log_info("Basic shader setup created.")
