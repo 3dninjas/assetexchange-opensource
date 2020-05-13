@@ -11,7 +11,7 @@ namespace AssetExchange.Importer
 
     public static class SurfaceMaps
     {
-        public static Texture2D MergeTextures(Texture2D texRgb, Texture2D texAlpha, bool invertAlpha = false)
+        public static Texture2D MergeTextures(Texture2D texRgb, Color defRgb, Texture2D texAlpha, float defAlpha, bool invertAlpha)
         {
             if (texRgb == null && texAlpha == null)
             {
@@ -28,8 +28,8 @@ namespace AssetExchange.Importer
 
             for (int i = 0; i < width * height; ++i)
             {
-                pix[i] = pixRgb != null ? pixRgb[i] : new Color(1.0f, 1.0f, 1.0f);
-                pix[i].a = pixAlpha != null ? ((pixAlpha[i].r + pixAlpha[i].g + pixAlpha[i].b) / 3.0f) : 1.0f;
+                pix[i] = pixRgb != null ? pixRgb[i] : defRgb;
+                pix[i].a = pixAlpha != null ? ((pixAlpha[i].r + pixAlpha[i].g + pixAlpha[i].b) / 3.0f) : defAlpha;
                 pix[i].a = invertAlpha ? 1.0f - pix[i].a : pix[i].a;
             }
 
@@ -64,14 +64,23 @@ namespace AssetExchange.Importer
                     ".mat"
                 );
 
+                // detect workflow
+                var isMetalnessRoughnessFlow = surfaceMaps.ContainsKey("Metalness") || !surfaceMaps.ContainsKey("Specular");
+
                 // prepare material
-                var mat = new Material(Shader.Find("Standard (Specular setup)"));
+                var mat = new Material(Shader.Find(isMetalnessRoughnessFlow ? "Standard" : "Standard (Specular setup)"));
 
                 // add Diffuse
-                if (surfaceMaps.ContainsKey("Diffuse"))
+                if (surfaceMaps.ContainsKey("Base Color") || surfaceMaps.ContainsKey("Albedo") || surfaceMaps.ContainsKey("Diffuse"))
                 {
                     // import texture
-                    var texSrcPath = surfaceMaps["Diffuse"]["file"]["path"];
+                    var texSrcPath = (
+                        surfaceMaps.ContainsKey("Base Color") ? surfaceMaps["Base Color"] : (
+                            surfaceMaps.ContainsKey("Albedo") ? surfaceMaps["Albedo"] : (
+                                surfaceMaps["Diffuse"]
+                            )
+                        )
+                    )["file"]["path"];
                     var texName = Path.GetFileNameWithoutExtension(matName) + "_Diffuse" + Path.GetExtension(texSrcPath);
                     File.Copy(texSrcPath, Path.Combine(targetPath, texName));
                     AssetDatabase.Refresh();
@@ -84,8 +93,71 @@ namespace AssetExchange.Importer
                     mat.SetTexture("_MainTex", tex);
                 }
 
+                // add Metalness and/or Roughness
+                if (isMetalnessRoughnessFlow && (surfaceMaps.ContainsKey("Metalness") || surfaceMaps.ContainsKey("Roughness")))
+                {
+                    // import texture
+                    string texNameMetalness = null;
+                    if (surfaceMaps.ContainsKey("Metalness"))
+                    {
+                        // copy file
+                        var texSrcPath = surfaceMaps["Metalness"]["file"]["path"];
+                        texNameMetalness = Path.GetFileNameWithoutExtension(matName) + "_Metalness" + Path.GetExtension(texSrcPath);
+                        File.Copy(texSrcPath, Path.Combine(targetPath, texNameMetalness));
+                        AssetDatabase.Refresh();
+                        // fix texture parameter
+                        TextureImporter importerMetalness = (TextureImporter)AssetImporter.GetAtPath(relTargetPath + "/" + texNameMetalness);
+                        importerMetalness.maxTextureSize = 8192;
+                        importerMetalness.isReadable = true;
+                        importerMetalness.SaveAndReimport();
+                    }
+                    string texNameRoughness = null;
+                    if (surfaceMaps.ContainsKey("Roughness"))
+                    {
+                        // copy file
+                        var texSrcPath = surfaceMaps["Roughness"]["file"]["path"];
+                        texNameRoughness = Path.GetFileNameWithoutExtension(matName) + "_Roughness" + Path.GetExtension(texSrcPath);
+                        File.Copy(texSrcPath, Path.Combine(targetPath, texNameRoughness));
+                        AssetDatabase.Refresh();
+                        // fix texture parameter
+                        TextureImporter importerRoughness = (TextureImporter)AssetImporter.GetAtPath(relTargetPath + "/" + texNameRoughness);
+                        importerRoughness.maxTextureSize = 8192;
+                        importerRoughness.isReadable = true;
+                        importerRoughness.SaveAndReimport();
+                    }
+                    // merge textures
+                    var texMetalness = texNameMetalness != null
+                        ? (Texture2D)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texNameMetalness, typeof(Texture2D))
+                        : null;
+                    var texRoughness = texNameRoughness != null
+                        ? (Texture2D)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texNameRoughness, typeof(Texture2D))
+                        : null;
+                    var tex = MergeTextures(texMetalness, new Color(0.0f, 0.0f, 0.0f), texRoughness, 1.0f, true);
+                    // delete unmerged textures
+                    if (texNameMetalness != null)
+                    {
+                        AssetDatabase.DeleteAsset(relTargetPath + "/" + texNameMetalness);
+                    }
+                    if (texNameRoughness != null)
+                    {
+                        AssetDatabase.DeleteAsset(relTargetPath + "/" + texNameRoughness);
+                    }
+                    // import merged texture
+                    var texName = Path.GetFileNameWithoutExtension(matName) + "_MetalnessGlossiness.png";
+                    File.WriteAllBytes(Path.Combine(targetPath, texName), tex.EncodeToPNG());
+                    AssetDatabase.Refresh();
+                    // fix texture parameter
+                    TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(relTargetPath + "/" + texName);
+                    importer.maxTextureSize = 8192;
+                    importer.SaveAndReimport();
+                    // link to material
+                    var tex2 = (Texture)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texName, typeof(Texture));
+                    mat.EnableKeyword ("_METALLICGLOSSMAP");
+                    mat.SetTexture("_MetallicGlossMap", tex2);
+                }
+
                 // add Specular and/or Roughness
-                if (surfaceMaps.ContainsKey("Specular") || surfaceMaps.ContainsKey("Roughness"))
+                if (!isMetalnessRoughnessFlow && (surfaceMaps.ContainsKey("Specular") || surfaceMaps.ContainsKey("Roughness")))
                 {
                     // import texture
                     string texNameSpecular = null;
@@ -123,7 +195,7 @@ namespace AssetExchange.Importer
                     var texRoughness = texNameRoughness != null
                         ? (Texture2D)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texNameRoughness, typeof(Texture2D))
                         : null;
-                    var tex = MergeTextures(texSpecular, texRoughness, true);
+                    var tex = MergeTextures(texSpecular, new Color(1.0f, 1.0f, 1.0f), texRoughness, 1.0f, true);
                     // delete unmerged textures
                     if (texNameSpecular != null)
                     {
@@ -142,7 +214,9 @@ namespace AssetExchange.Importer
                     importer.maxTextureSize = 8192;
                     importer.SaveAndReimport();
                     // link to material
-                    mat.SetTexture("_SpecGlossMap", tex);
+                    var tex2 = (Texture)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texName, typeof(Texture));
+                    mat.EnableKeyword ("_SPECGLOSSMAP");
+                    mat.SetTexture("_SpecGlossMap", tex2);
                 }
 
                 // add Normal
@@ -161,6 +235,7 @@ namespace AssetExchange.Importer
                     importer.SaveAndReimport();
                     // link to material
                     var tex = (Texture)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texName, typeof(Texture));
+                    mat.EnableKeyword ("_NORMALMAP");
                     mat.SetTexture("_BumpMap", tex);
                 }
 
@@ -179,6 +254,7 @@ namespace AssetExchange.Importer
                     importer.SaveAndReimport();
                     // link to material
                     var tex = (Texture)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texName, typeof(Texture));
+                    mat.EnableKeyword ("_PARALLAXMAP");
                     mat.SetTexture("_ParallaxMap", tex);
                 }
 
