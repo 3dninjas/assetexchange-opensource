@@ -39,6 +39,31 @@ namespace AssetExchange.Importer
             return tex;
         }
 
+        public static Texture2D InvertNormapMap(Texture2D texIn)
+        {
+            if (texIn == null)
+            {
+                throw new Exception("input map not provided");
+            }
+
+            var width = texIn.width;
+            var height = texIn.height;
+
+            Color[] pixIn = texIn.GetPixels();
+            Color[] pixOut = new Color[width * height];
+
+            for (int i = 0; i < width * height; ++i)
+            {
+                pixOut[i] = pixIn[i];
+                pixOut[i].g = 1.0f - pixOut[i].g;
+            }
+
+            Texture2D texOut = new Texture2D(width, height, TextureFormat.RGB24, false);
+            texOut.SetPixels(pixOut);
+
+            return texOut;
+        }
+
         public static void Import(JsonObject asset, JsonObject selectedVariants)
         {
             // explode variants
@@ -227,6 +252,23 @@ namespace AssetExchange.Importer
                     var texName = Path.GetFileNameWithoutExtension(matName) + "_Normal" + Path.GetExtension(texSrcPath);
                     File.Copy(texSrcPath, Path.Combine(targetPath, texName));
                     AssetDatabase.Refresh();
+                    // fix handedness
+                    if (surfaceMaps["Normal"]["details"]["handedness"] == "left")
+                    {
+                        // fix texture parameter
+                        TextureImporter importer2 = (TextureImporter)AssetImporter.GetAtPath(relTargetPath + "/" + texName);
+                        importer2.maxTextureSize = 8192;
+                        importer2.isReadable = true;
+                        importer2.sRGBTexture = false;
+                        importer2.SaveAndReimport();
+                        // convert normap map
+                        var tex2 = InvertNormapMap((Texture2D)AssetDatabase.LoadAssetAtPath(relTargetPath + "/" + texName, typeof(Texture2D)));
+                        // replace normal map
+                        AssetDatabase.DeleteAsset(relTargetPath + "/" + texName);
+                        texName = Path.GetFileNameWithoutExtension(matName) + "_NormalConverted.png";
+                        File.WriteAllBytes(Path.Combine(targetPath, texName), tex2.EncodeToPNG());
+                        AssetDatabase.Refresh();
+                    }
                     // fix texture parameter
                     TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(relTargetPath + "/" + texName);
                     importer.maxTextureSize = 8192;
