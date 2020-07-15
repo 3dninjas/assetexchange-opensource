@@ -1,4 +1,4 @@
-[![CLA assistant](https://cla-assistant.io/readme/badge/assetninja/assetexchange)](https://cla-assistant.io/assetninja/assetexchange)
+[![CLA assistant](https://cla-assistant.io/readme/badge/assetninja/assetexchange-opensource)](https://cla-assistant.io/assetninja/assetexchange-opensource)
 
 # assetexchange
 
