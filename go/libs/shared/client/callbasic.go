@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	common "github.com/assetninja/assetexchange/go/libs/shared/common"
+	common "github.com/3dninjas/assetexchange/go/libs/shared/common"
 )
 
 // CallBasicFunc executes a complete rpc call with single input and single output via HTTP

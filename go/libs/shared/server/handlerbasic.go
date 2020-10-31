@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	common "github.com/assetninja/assetexchange/go/libs/shared/common"
+	common "github.com/3dninjas/assetexchange/go/libs/shared/common"
 )
 
 func newBasicHandler(registry *Registry) func(res http.ResponseWriter, req *http.Request) {

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	client "github.com/assetninja/assetexchange/go/libs/shared/client"
+	client "github.com/3dninjas/assetexchange/go/libs/shared/client"
 )
 
 func cmdRPCWithPortLookup(useStream bool, category string, typex string, service string, function string) {

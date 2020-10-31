@@ -1,4 +1,4 @@
-module github.com/assetninja/assetexchange/go/libs/shared
+module github.com/3dninjas/assetexchange/go/libs/shared
 
 go 1.13
 
