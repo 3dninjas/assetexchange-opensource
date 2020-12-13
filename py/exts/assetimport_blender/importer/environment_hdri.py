@@ -27,4 +27,4 @@ def environment_hdri(asset, selectedVariants):
 
         # link to world
         world.node_tree.links.new(
-            nodes.get("World Output").inputs[0], env_text_node.outputs[0])
+            nodes.get("Background").inputs['Color'], env_text_node.outputs['Color'])

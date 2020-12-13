@@ -44,7 +44,7 @@ def surface_maps(asset, selectedVariants):
             diff_tex_node.image.colorspace_settings.name = "sRGB"
             # link to bsdf
             mat.node_tree.links.new(
-                nodes.get("Principled BSDF").inputs[0], diff_tex_node.outputs[0])
+                nodes.get("Principled BSDF").inputs['Base Color'], diff_tex_node.outputs['Color'])
             # position node
             diff_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
@@ -60,7 +60,7 @@ def surface_maps(asset, selectedVariants):
             met_tex_node.image.colorspace_settings.name = "Non-Color"
             # link to bsdf
             mat.node_tree.links.new(
-                nodes.get("Principled BSDF").inputs[4], met_tex_node.outputs[0])
+                nodes.get("Principled BSDF").inputs['Metallic'], met_tex_node.outputs['Color'])
             # position node
             met_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
@@ -76,7 +76,7 @@ def surface_maps(asset, selectedVariants):
             spec_tex_node.image.colorspace_settings.name = "Non-Color"
             # link to bsdf
             mat.node_tree.links.new(
-                nodes.get("Principled BSDF").inputs[5], spec_tex_node.outputs[0])
+                nodes.get("Principled BSDF").inputs['Specular'], spec_tex_node.outputs['Color'])
             # position node
             spec_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
@@ -92,7 +92,7 @@ def surface_maps(asset, selectedVariants):
             rough_tex_node.image.colorspace_settings.name = "Non-Color"
             # link to bsdf
             mat.node_tree.links.new(
-                nodes.get("Principled BSDF").inputs[7], rough_tex_node.outputs[0])
+                nodes.get("Principled BSDF").inputs['Roughness'], rough_tex_node.outputs['Color'])
             # position node
             rough_tex_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
@@ -119,11 +119,11 @@ def surface_maps(asset, selectedVariants):
             norm_map_node.uv_map = "UVMap"
             # link to bsdf
             mat.node_tree.links.new(
-                norm_curve_node.inputs[1], norm_tex_node.outputs[0])
+                norm_curve_node.inputs['Color'], norm_tex_node.outputs['Color'])
             mat.node_tree.links.new(
-                norm_map_node.inputs[1], norm_curve_node.outputs[0])
+                norm_map_node.inputs['Color'], norm_curve_node.outputs['Color'])
             mat.node_tree.links.new(
-                nodes.get("Principled BSDF").inputs[19], norm_map_node.outputs[0])
+                nodes.get("Principled BSDF").inputs['Normal'], norm_map_node.outputs['Normal'])
             # position node
             norm_tex_node.location = (node_x - 800, node_y_next)
             norm_curve_node.location = (node_x - 400, node_y_next)
@@ -136,8 +136,8 @@ def surface_maps(asset, selectedVariants):
         if "Displacement" in surface_maps:
             # displacement node
             disp_node = nodes.new("ShaderNodeDisplacement")
-            disp_node.inputs[1].default_value = 0
-            disp_node.inputs[2].default_value = 0.1
+            disp_node.inputs['Midlevel'].default_value = 0
+            disp_node.inputs['Scale'].default_value = 0.1
             # texture node
             disp_tex_node = nodes.new('ShaderNodeTexImage')
             disp_tex_node.image = bpy.data.images.load(surface_maps["Displacement"]["file"]["path"])
@@ -145,9 +145,9 @@ def surface_maps(asset, selectedVariants):
             disp_tex_node.image.colorspace_settings.name = "Non-Color"
             # link to bsdf
             mat.node_tree.links.new(
-                disp_node.inputs[0], disp_tex_node.outputs[0])
+                disp_node.inputs['Height'], disp_tex_node.outputs['Color'])
             mat.node_tree.links.new(
-                nodes.get("Material Output").inputs[2], disp_node.outputs[0])
+                nodes.get("Material Output").inputs['Displacement'], disp_node.outputs['Displacement'])
             # enable displacement
             mat.cycles.displacement_method = 'BOTH'
             # position
