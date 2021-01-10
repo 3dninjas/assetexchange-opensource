@@ -1,11 +1,13 @@
 @echo off
 
 rem parameter
-SET ADDON_MODULE=%1
-IF "%ADDON_MODULE%" == "" SET ADDON_MODULE=assetimport_blender
+SET "ADDON_MODULE=%~1"
+IF "%ADDON_MODULE%" == "" SET "ADDON_MODULE=assetimport_blender"
 
-SET BLENDER_PATH=%1
-IF "%BLENDER_PATH%" == "" SET BLENDER_PATH=blender.exe
+SET "BLENDER_PATH=%~2"
+IF "%BLENDER_PATH%" == "" SET "BLENDER_PATH=blender.exe"
+
+echo %0 %ADDON_MODULE% %BLENDER_PATH%
 
 rem environment
 set PYTHONPATH=%~dp0exts;%~dp0libs
