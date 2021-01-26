@@ -14,8 +14,12 @@ def map_maps(shader_name, surface_maps, shader):
                                     run_init_scripts=False, load_contents=True, exact_type_name=True)
     node_name = str("/mat/"+shader_name)
 
-    if "Diffuse" in surface_maps:
-        diffuse = str(surface_maps["Diffuse"]["file"]["path"])
+    # add base color/albedo/diffuse
+    if "Base Color" in surface_maps or "Albedo" in surface_maps or "Diffuse" in surface_maps:
+        basecolor = str(
+            surface_maps.get("Base Color",
+                             surface_maps.get("Albedo",
+                                              surface_maps.get("Diffuse")))["file"]["path"])
         if locals().get("hou_node") is None:
             hou_node = hou.node(node_name)
         hou_parm = hou_node.parm("basecolor_useTexture")
@@ -23,22 +27,22 @@ def map_maps(shader_name, surface_maps, shader):
         hou_parm.set(1)
         hou_parm = hou_node.parm("basecolor_texture")
         hou_parm.lock(False)
-        hou_parm.set(diffuse)
+        hou_parm.set(basecolor)
         hou_parm.setAutoscope(False)
 
-    if "Albedo" in surface_maps:
-        diffuse = str(surface_maps["Albedo"]["file"]["path"])
+    # add metalness
+    if "Metalness" in surface_maps:
+        metalness = surface_maps["Metalness"]["file"]["path"]
+        # TODO
+        pass
 
-        if locals().get("hou_node") is None:
-            hou_node = hou.node(node_name)
-        hou_parm = hou_node.parm("basecolor_useTexture")
-        hou_parm.lock(False)
-        hou_parm.set(1)
-        hou_parm = hou_node.parm("basecolor_texture")
-        hou_parm.lock(False)
-        hou_parm.set(diffuse)
-        hou_parm.setAutoscope(False)
+    # add specular
+    if "Specular" in surface_maps and not "Metalness" in surface_maps:
+        specular = surface_maps["Specular"]["file"]["path"]
+        # TODO
+        pass
 
+    # add roughness
     if "Roughness" in surface_maps:
         rough = str(surface_maps["Roughness"]["file"]["path"])
 
@@ -59,7 +63,10 @@ def map_maps(shader_name, surface_maps, shader):
         hou_parm.set("linear")
         hou_parm.setAutoscope(False)
 
+    # add normal
     if "Normal" in surface_maps:
+        normal_handedness_right = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
+        # TODO: handedness (right = opengl, left = directx)
         normal = str(surface_maps["Normal"]["file"]["path"])
         if locals().get("hou_node") is None:
             hou_node = hou.node(node_name)
@@ -80,6 +87,7 @@ def map_maps(shader_name, surface_maps, shader):
         hou_parm.set(normal)
         hou_parm.setAutoscope(False)
 
+    # add displacement
     if "Displacement" in surface_maps:
         displace = str(surface_maps["Displacement"]["file"]["path"])
         if locals().get("hou_node") is None:
