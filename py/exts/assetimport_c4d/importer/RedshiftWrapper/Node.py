@@ -3,8 +3,8 @@ try:
     import redshift
 except:
     pass
-from MetaName import MetaName
-from ImportTester import ImportTester
+from .MetaName import MetaName
+from .ImportTester import ImportTester
 
 
 class Node(MetaName):

@@ -1,19 +1,14 @@
 import os
 import time
 import threading
+import http
 import json
 import sys
 import atexit
 import logging
-import BaseHTTPServer
-import SocketServer
 import c4d
 import assetexchange_shared
 from . import mainthread
-
-
-class ThreadingHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
-    """Handle requests in a separate thread."""
 
 
 _http_servers = dict()
@@ -69,7 +64,7 @@ def register_plugin(plugin_uid, plugin_info, AssetPushService=None, misc_service
             return self._service_registry
 
     # start http server using a free port
-    _http_servers[plugin_uid] = ThreadingHTTPServer(
+    _http_servers[plugin_uid] = http.server.ThreadingHTTPServer(
         ('127.0.0.1', 0),
         HttpServerRequestHandler
     )

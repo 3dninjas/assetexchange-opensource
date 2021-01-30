@@ -1,4 +1,4 @@
-import Queue as queue
+import queue
 import threading
 import c4d
 

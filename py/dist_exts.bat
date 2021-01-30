@@ -10,7 +10,7 @@ if not exist ".\dist" mkdir ".\dist" || goto :error
 rem pack assetimport extensions
 call npx -q pyscriptpacker@latest "3.5" ".\dist\assetimport_blender.py" "assetninja_assetimport" "assetimport_blender" ".\exts" ".\libs" || goto :error
 call npx -q pyscriptpacker@latest "2.7" ".\dist\assetimport_maya.py" "assetninja_assetimport" "assetimport_maya" ".\exts" ".\libs" || goto :error
-call npx -q pyscriptpacker@latest "2.7" ".\dist\assetimport_c4d.pyp" "assetninja_assetimport" "assetimport_c4d" ".\exts" ".\libs" || goto :error
+call npx -q pyscriptpacker@latest "3.5" ".\dist\assetimport_c4d.pyp" "assetninja_assetimport" "assetimport_c4d" ".\exts" ".\libs" || goto :error
 call npx -q pyscriptpacker@latest "2.7" ".\dist\assetimport_clarisse.py" "assetninja_assetimport" "assetimport_clarisse" ".\exts" ".\libs" || goto :error
 call npx -q pyscriptpacker@latest "2.7" ".\dist\assetimport_houdini.py" "assetninja_assetimport" "assetimport_houdini" ".\exts" ".\libs" || goto :error
 

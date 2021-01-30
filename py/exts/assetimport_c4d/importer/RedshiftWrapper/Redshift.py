@@ -7,9 +7,9 @@ try:
 except:
     pass
 
-from ImportTester import ImportTester
-from Node import Node
-from MetaName import MetaName
+from .ImportTester import ImportTester
+from .Node import Node
+from .MetaName import MetaName
 
 # ==============================================
 #                   Import

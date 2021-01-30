@@ -5,7 +5,7 @@ from .RedshiftWrapper import Redshift
 def Create_Redshift_Material(doc, mat_name, surface_maps):
     rs = Redshift()
     if rs is False:
-        print "Redshift Wrapper not working..."
+        print ("Redshift Wrapper not working...")
         return False
 
     mat = rs.CreateMaterial()
