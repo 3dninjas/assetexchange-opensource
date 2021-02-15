@@ -106,27 +106,39 @@ def surface_maps(asset, selectedVariants):
             norm_tex_node.image = bpy.data.images.load(surface_maps["Normal"]["file"]["path"])
             norm_tex_node.show_texture = True
             norm_tex_node.image.colorspace_settings.name = "Non-Color"
-            # invert node
-            norm_curve_node = nodes.new("ShaderNodeRGBCurve")
-            norm_curve_node.mapping.initialize()
-            norm_curve_node.mapping.curves[1].points[0].location[1] = 1
-            norm_curve_node.mapping.curves[1].points[1].location[1] = 0
-            norm_curve_node.mapping.update()
-            norm_curve_node.mute = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
             # normal map node
             norm_map_node = nodes.new("ShaderNodeNormalMap")
             norm_map_node.space = "TANGENT"
             norm_map_node.uv_map = "UVMap"
+
+            # check for whether map is using opengl or directx
+            handedness_ogl = surface_maps["Normal"]["details"].get("handedness", "right") == "right"
+
+            if handedness_ogl:
+                # link the image texture and normal node
+                mat.node_tree.links.new(
+                    norm_map_node.inputs['Color'], norm_tex_node.outputs['Color'])
+            else:
+                # invert node
+                norm_curve_node = nodes.new("ShaderNodeRGBCurve")
+                norm_curve_node.mapping.initialize()
+                norm_curve_node.mapping.curves[1].points[0].location[1] = 1
+                norm_curve_node.mapping.curves[1].points[1].location[1] = 0
+                norm_curve_node.mapping.update()
+                norm_curve_node.mute = handedness_ogl
+                norm_curve_node.location = (node_x - 400, node_y_next)
+
+                # link the image texture, rgb curves and normal node
+                mat.node_tree.links.new(
+                    norm_curve_node.inputs['Color'], norm_tex_node.outputs['Color'])
+                mat.node_tree.links.new(
+                    norm_map_node.inputs['Color'], norm_curve_node.outputs['Color'])
+
             # link to bsdf
-            mat.node_tree.links.new(
-                norm_curve_node.inputs['Color'], norm_tex_node.outputs['Color'])
-            mat.node_tree.links.new(
-                norm_map_node.inputs['Color'], norm_curve_node.outputs['Color'])
             mat.node_tree.links.new(
                 nodes.get("Principled BSDF").inputs['Normal'], norm_map_node.outputs['Normal'])
             # position node
             norm_tex_node.location = (node_x - 800, node_y_next)
-            norm_curve_node.location = (node_x - 400, node_y_next)
             norm_map_node.location = (node_x, node_y_next)
             node_y_next -= node_y_delta
             # connect to mapping
